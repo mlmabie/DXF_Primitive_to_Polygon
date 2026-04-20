@@ -19,7 +19,7 @@
     body { margin: 0; background: linear-gradient(180deg, #f6f4ef 0%, #efefe8 100%); color: var(--ink); }
     a { color: #0e5ba8; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .page { width: min(98vw, 2200px); max-width: 2200px; margin: 0 auto; padding: 18px 14px 40px; }
+    .page { width: min(96vw, 1680px); max-width: 1680px; margin: 0 auto; padding: 14px 12px 32px; }
     .hero {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -46,15 +46,35 @@
       display: block;
       background: #fff;
     }
+    .stats-run {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    @media (min-width: 1400px) {
+      .stats-run--metrics {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+      }
+      .stats-run--metrics .metric-grid,
+      .stats-run--metrics .family-strip {
+        display: contents;
+      }
+      .stats-run--prov {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .stats-run--prov .metric-grid {
+        display: contents;
+      }
+    }
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 6px;
+      margin-bottom: 8px;
     }
     .metric-card {
-      padding: 12px 14px 12px;
-      border-radius: 16px;
+      padding: 9px 11px 10px;
+      border-radius: 12px;
       border: 1px solid var(--line);
       background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
@@ -70,14 +90,14 @@
       height: 3px;
       background: var(--accent);
     }
-    .metric-title { font-size: 0.86rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .metric-value { font-size: 1.55rem; margin: 6px 0 4px; font-weight: 700; }
-    .metric-detail { color: var(--muted); font-size: 0.84rem; line-height: 1.3; }
+    .metric-title { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.2; }
+    .metric-value { font-size: 1.32rem; margin: 4px 0 2px; font-weight: 700; line-height: 1.15; }
+    .metric-detail { color: var(--muted); font-size: 0.78rem; line-height: 1.28; }
     .family-strip {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 18px;
+      gap: 6px;
+      margin-bottom: 0;
     }
     .section-title {
       margin: 22px 0 10px;
@@ -219,13 +239,13 @@
       </div>
     </section>
 
-    <section>
-      <div class="metric-grid"><div class='metric-card' style='--accent:#111111'><div class='metric-title'>Runtime</div><div class='metric-value'>1.52s</div><div class='metric-detail'>parse + extraction + stats</div></div><div class='metric-card' style='--accent:#444444'><div class='metric-title'>Scoped Primitives</div><div class='metric-value'>34,834</div><div class='metric-detail'>target-layer entities</div></div><div class='metric-card' style='--accent:#0b7285'><div class='metric-title'>Consumed Length</div><div class='metric-value'>19.9%</div><div class='metric-detail'>228,197 / 1,144,751 units</div></div><div class='metric-card' style='--accent:#6c5ce7'><div class='metric-title'>Direct vs Graph</div><div class='metric-value'>699 / 451</div><div class='metric-detail'>direct closures / graph faces</div></div></div>
+    <section class="stats-run stats-run--metrics">
+      <div class="metric-grid"><div class='metric-card' style='--accent:#111111'><div class='metric-title'>Runtime</div><div class='metric-value'>0.19s</div><div class='metric-detail'>parse + extraction + stats</div></div><div class='metric-card' style='--accent:#444444'><div class='metric-title'>Scoped Primitives</div><div class='metric-value'>34,834</div><div class='metric-detail'>target-layer entities</div></div><div class='metric-card' style='--accent:#0b7285'><div class='metric-title'>Consumed Length</div><div class='metric-value'>19.9%</div><div class='metric-detail'>228,197 / 1,144,751 units</div></div><div class='metric-card' style='--accent:#6c5ce7'><div class='metric-title'>Direct vs Graph</div><div class='metric-value'>699 / 451</div><div class='metric-detail'>direct closures / graph faces</div></div></div>
       <div class="family-strip"><div class='metric-card' style='--accent:#2f5bff'><div class='metric-title'>Walls</div><div class='metric-value'>274</div><div class='metric-detail'>median area 1,480.3</div></div><div class='metric-card' style='--accent:#d9342b'><div class='metric-title'>Columns</div><div class='metric-value'>572</div><div class='metric-detail'>median area 695.6</div></div><div class='metric-card' style='--accent:#1b9e5a'><div class='metric-title'>Curtain Walls</div><div class='metric-value'>304</div><div class='metric-detail'>median area 25.0</div></div></div>
     </section>
 
     <h2 class="section-title">Provenance</h2>
-    <section>
+    <section class="stats-run stats-run--prov">
       <div class="metric-grid"><div class='metric-card' style='--accent:#7c4dff'><div class='metric-title'>Raw Layers</div><div class='metric-value'>25</div><div class='metric-detail'>scoped target layers</div></div><div class='metric-card' style='--accent:#9c6644'><div class='metric-title'>Variant Groups</div><div class='metric-value'>23</div><div class='metric-detail'>canonical family-layer groups</div></div><div class='metric-card' style='--accent:#007f5f'><div class='metric-title'>Multi-Variant Groups</div><div class='metric-value'>2</div><div class='metric-detail'>groups with more than one raw layer</div></div><div class='metric-card' style='--accent:#c05f00'><div class='metric-title'>Multi-Layer Polygons</div><div class='metric-value'>22</div><div class='metric-detail'>recovered tokens drawing from multiple raw layers</div></div></div>
     </section>
 

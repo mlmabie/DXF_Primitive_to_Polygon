@@ -76,19 +76,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build the full HITL analysis bundle: extraction, provenance, dashboard, and merge lab.")
     parser.add_argument("input_dxf", type=Path, help="Source DXF file.")
     parser.add_argument("output_dir", type=Path, help="Directory for all generated artifacts.")
-    parser.add_argument("--snap-tolerance", type=float, default=0.5, help="Endpoint snap tolerance for graph reconstruction.")
+    parser.add_argument("--mode", choices=sorted(td.SNAP_TOLERANCE_MODES), default="conservative", help="Named extraction preset. conservative=0.5, liberal=0.75.")
+    parser.add_argument("--snap-tolerance", type=float, default=None, help="Endpoint snap tolerance for graph reconstruction. Overrides --mode when provided.")
     args = parser.parse_args()
+    effective_snap_tolerance = args.snap_tolerance if args.snap_tolerance is not None else td.SNAP_TOLERANCE_MODES[args.mode]
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, args.snap_tolerance)
+    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, effective_snap_tolerance)
     extraction = token_summary["extraction"]
-    build_dashboard.build_dashboard(args.input_dxf, args.output_dir, args.snap_tolerance, extraction=extraction)
-    write_merge_lab_bundle(args.input_dxf, args.output_dir, args.snap_tolerance, extraction=extraction)
+    build_dashboard.build_dashboard(args.input_dxf, args.output_dir, effective_snap_tolerance, extraction=extraction)
+    write_merge_lab_bundle(args.input_dxf, args.output_dir, effective_snap_tolerance, extraction=extraction)
 
     manifest = {
         "input_file": str(args.input_dxf),
-        "snap_tolerance": args.snap_tolerance,
+        "mode": args.mode,
+        "snap_tolerance": effective_snap_tolerance,
         "polygon_counts": token_summary["polygon_counts"],
         "provenance_summary": token_summary["provenance"],
         "artifacts": [

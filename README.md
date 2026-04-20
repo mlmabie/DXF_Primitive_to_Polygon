@@ -38,6 +38,18 @@ python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out
 Optional:
 
 ```bash
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode conservative
+```
+
+More liberal:
+
+```bash
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode liberal
+```
+
+Manual override:
+
+```bash
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --snap-tolerance 0.5
 ```
 
@@ -59,7 +71,7 @@ This writes:
 This builds the reproducible analysis bundle around the same extraction:
 
 ```bash
-python3 -m augrade.cli.pipeline "Airport Doors_MEZZ.dxf" out --snap-tolerance 0.5
+python3 -m augrade.cli.pipeline "Airport Doors_MEZZ.dxf" out --mode conservative
 ```
 
 This writes:
@@ -107,6 +119,48 @@ On the supplied airport file, the current extraction produces:
 - `304` curtain walls
 
 These results are reproducible through the commands above.
+
+## Recommended Operating Modes
+
+Two modes are worth keeping distinct:
+
+### Conservative
+
+```bash
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode conservative
+```
+
+This is the best default for review and submission:
+
+- `274` walls
+- `572` columns
+- `304` curtain walls
+- coverage proxy: `19.9%`
+
+It is the most stable setting tested and stays closest to the current documented baseline.
+
+### More Liberal
+
+```bash
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode liberal
+```
+
+This is the best second option tested:
+
+- `288` walls
+- `568` columns
+- `309` curtain walls
+- coverage proxy: `20.8%`
+
+Why `0.75` and not `1.0+`:
+
+- `1.0`, `1.5`, and `2.0` slightly improve or match the coverage proxy, but they distort family counts more aggressively, especially for columns and curtain walls.
+- `0.75` gives a modest recovery bump while staying relatively close to the conservative solution.
+
+So the simplest interpretation is:
+
+- `0.5` = submission / audit mode
+- `0.75` = exploratory liberal mode
 
 ## What The Analysis Added
 
