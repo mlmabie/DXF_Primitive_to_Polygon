@@ -45716,7 +45716,7 @@
     }
   ],
   "metrics": {
-    "runtime_seconds": 1.449,
+    "runtime_seconds": 3.277,
     "primitives_consumed": 2980,
     "primitives_total": 34834,
     "warnings": [

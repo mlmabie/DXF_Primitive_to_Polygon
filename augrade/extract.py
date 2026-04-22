@@ -9,22 +9,30 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 import tokenize_dxf as td
+
+
+SnapTolerance = Union[float, dict]
 
 
 @dataclass
 class ExtractionResult:
     input_path: Path
-    snap_tolerance: float
+    snap_tolerance: SnapTolerance
     entities: List[td.Entity]
     polygons: List[td.PolygonRecord]
     graph_segments: List[td.Segment]
     runtime_seconds: float
 
+    @property
+    def scalar_snap_tolerance(self) -> float:
+        """Single scalar for dashboards/filenames/merge-lab display."""
+        return td.snap_tolerance_for_report(self.snap_tolerance)
 
-def run_extraction(input_path: Path, snap_tolerance: float) -> ExtractionResult:
+
+def run_extraction(input_path: Path, snap_tolerance: SnapTolerance) -> ExtractionResult:
     start = time.time()
     entities = list(td.iter_entities(input_path))
     direct_polygons = td.extract_direct_polygons(entities)

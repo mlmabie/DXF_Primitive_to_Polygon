@@ -13,17 +13,21 @@ from . import provenance as pu
 from .extract import run_extraction
 
 
-def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance: float) -> dict:
+def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance) -> dict:
     extraction = run_extraction(input_dxf, snap_tolerance)
     entities = extraction.entities
     polygons = extraction.polygons
     graph_segments = extraction.graph_segments
+    report_tolerance = extraction.scalar_snap_tolerance
 
     summary = td.build_analysis_summary(
         entities=entities,
         polygons=polygons,
         runtime_seconds=extraction.runtime_seconds,
         snap_stats=td.compute_snap_stats(entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]),
+    )
+    summary["snap_tolerance"] = (
+        dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
     )
     output_json = td.build_output_json(polygons, entities, runtime_seconds=summary["runtime_seconds"])
     provenance = pu.build_provenance_index(entities)
@@ -57,7 +61,7 @@ def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance:
                 entity_filter=lambda entity, family=family: entity.family == family,
                 polygon_filter=lambda polygon, family=family: polygon.family == family,
             )
-    td.write_wall_connectivity_svg(output_dir / "wall_connectivity_snap_0_5.svg", graph_segments, tolerance=snap_tolerance)
+    td.write_wall_connectivity_svg(output_dir / "wall_connectivity_snap_0_5.svg", graph_segments, tolerance=report_tolerance)
 
     return {
         "extraction": extraction,
@@ -76,19 +80,36 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build the full HITL analysis bundle: extraction, provenance, dashboard, and merge lab.")
     parser.add_argument("input_dxf", type=Path, help="Source DXF file.")
     parser.add_argument("output_dir", type=Path, help="Directory for all generated artifacts.")
-    parser.add_argument("--snap-tolerance", type=float, default=0.5, help="Endpoint snap tolerance for graph reconstruction.")
+    parser.add_argument(
+        "--snap-tolerance",
+        type=str,
+        default="0.5",
+        help=(
+            "Endpoint snap tolerance for graph reconstruction. "
+            "Accepts a scalar, a per-family map "
+            "('walls=0.5,columns=0.25,curtain_walls=0.35'), or 'adaptive'."
+        ),
+    )
     args = parser.parse_args()
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, args.snap_tolerance)
+    # Resolve the snap argument once against parsed entities so every caller
+    # (dashboard, merge lab, connectivity SVG) sees the same value.
+    entities = list(td.iter_entities(args.input_dxf))
+    snap_tolerance = td.resolve_snap_tolerance(args.snap_tolerance, entities=entities)
+    scalar_snap = td.snap_tolerance_for_report(snap_tolerance)
+
+    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, snap_tolerance)
     extraction = token_summary["extraction"]
-    build_dashboard.build_dashboard(args.input_dxf, args.output_dir, args.snap_tolerance, extraction=extraction)
-    write_merge_lab_bundle(args.input_dxf, args.output_dir, args.snap_tolerance, extraction=extraction)
+    build_dashboard.build_dashboard(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
+    write_merge_lab_bundle(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
 
     manifest = {
         "input_file": str(args.input_dxf),
-        "snap_tolerance": args.snap_tolerance,
+        "snap_tolerance": (
+            dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
+        ),
         "polygon_counts": token_summary["polygon_counts"],
         "provenance_summary": token_summary["provenance"],
         "artifacts": [

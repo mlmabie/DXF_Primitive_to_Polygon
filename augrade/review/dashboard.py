@@ -912,7 +912,7 @@ def build_dashboard_html(
 
 
 def build_dashboard(input_dxf: Path, output_dir: Path, snap_tolerance: float, extraction=None) -> None:
-    from . import dataset as _ds
+    from .. import dataset as _ds
 
     analysis = _ds.build(input_dxf, snap_tolerance, extraction=extraction)
     render_dashboard(analysis, output_dir)

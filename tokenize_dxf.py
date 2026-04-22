@@ -9,7 +9,7 @@ import time
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Sequence, Tuple, Union
 
 
 Point = Tuple[float, float]
@@ -745,7 +745,23 @@ def snap_point(point: Point, tolerance: float) -> Point:
     return (round(point[0] / tolerance) * tolerance, round(point[1] / tolerance) * tolerance)
 
 
-def extract_faces_from_segments(segments: Sequence[Segment], tolerance: float) -> List[PolygonRecord]:
+SnapTolerance = Union[float, Mapping[str, float]]
+
+
+def _tolerance_for_family(tolerance: SnapTolerance, family: str) -> float:
+    if isinstance(tolerance, (int, float)):
+        return float(tolerance)
+    if family in tolerance:
+        return float(tolerance[family])
+    if "__default__" in tolerance:
+        return float(tolerance["__default__"])
+    # Fall back to the mean of provided families; keeps per-family maps
+    # that only list one or two families behaving sensibly.
+    values = list(tolerance.values())
+    return sum(values) / len(values) if values else 0.5
+
+
+def extract_faces_from_segments(segments: Sequence[Segment], tolerance: SnapTolerance) -> List[PolygonRecord]:
     by_family: Dict[str, List[Segment]] = defaultdict(list)
     for segment in segments:
         by_family[segment.family].append(segment)
@@ -753,10 +769,11 @@ def extract_faces_from_segments(segments: Sequence[Segment], tolerance: float) -
     polygons: List[PolygonRecord] = []
 
     for family, family_segments in by_family.items():
+        family_tolerance = _tolerance_for_family(tolerance, family)
         merged: Dict[Tuple[Point, Point], Dict[str, object]] = {}
         for segment in family_segments:
-            a = snap_point(segment.start, tolerance)
-            b = snap_point(segment.end, tolerance)
+            a = snap_point(segment.start, family_tolerance)
+            b = snap_point(segment.end, family_tolerance)
             if distance(a, b) <= 1e-9:
                 continue
             key = (a, b) if a <= b else (b, a)
@@ -976,6 +993,72 @@ def compute_snap_stats(entities: Sequence[Entity], wall_tolerances: Sequence[flo
             "degree_4_plus": sum(count for degree, count in histogram.items() if degree >= 4),
         }
     return stats
+
+
+ADAPTIVE_CANDIDATE_TOLERANCES: Tuple[float, ...] = (0.1, 0.25, 0.5, 1.0)
+
+
+def pick_adaptive_tolerance(
+    entities: Sequence[Entity],
+    candidates: Sequence[float] = ADAPTIVE_CANDIDATE_TOLERANCES,
+    fallback: float = 0.5,
+) -> float:
+    """Pick the elbow of the wall-family degree-4+ curve across candidate tolerances.
+
+    Second-difference maximum identifies where the curve stops improving
+    materially; returns the tolerance at that elbow. Falls back to a
+    documented default if the curve is too short or monotonic.
+    """
+    stats = compute_snap_stats(entities, wall_tolerances=candidates)
+    tols = sorted(candidates)
+    deg4 = [stats[str(t)]["degree_4_plus"] for t in tols]
+    if len(tols) < 3:
+        return tols[len(tols) // 2]
+    first = [deg4[i + 1] - deg4[i] for i in range(len(deg4) - 1)]
+    second = [first[i + 1] - first[i] for i in range(len(first) - 1)]
+    if not second:
+        return fallback
+    best = max(range(len(second)), key=lambda i: second[i])
+    return tols[best + 1]
+
+
+def resolve_snap_tolerance(arg: str, entities: Optional[Sequence[Entity]] = None) -> SnapTolerance:
+    """Parse a ``--snap-tolerance`` CLI argument into a tolerance value.
+
+    Accepted forms:
+
+    - ``"0.5"``                        uniform scalar
+    - ``"walls=0.5,columns=0.25"``     per-family, missing families fall back
+                                       to the mean of provided values
+    - ``"adaptive"``                   elbow-picked single scalar from the
+                                       wall degree-distribution histogram
+                                       (requires ``entities`` to be provided)
+    """
+    text = arg.strip()
+    if text == "adaptive":
+        if entities is None:
+            raise ValueError("adaptive snap tolerance requires parsed entities")
+        return pick_adaptive_tolerance(entities)
+    if "=" in text:
+        parsed: Dict[str, float] = {}
+        for token in text.split(","):
+            key, _, value = token.strip().partition("=")
+            key = key.strip()
+            value = value.strip()
+            if not key or not value:
+                raise ValueError(f"malformed --snap-tolerance entry: {token!r}")
+            parsed[key] = float(value)
+        if not parsed:
+            raise ValueError(f"empty per-family snap map: {text!r}")
+        return parsed
+    return float(text)
+
+
+def snap_tolerance_for_report(tolerance: SnapTolerance) -> float:
+    """Single scalar for report filenames and legacy fields."""
+    if isinstance(tolerance, (int, float)):
+        return float(tolerance)
+    return _tolerance_for_family(tolerance, "walls")
 
 
 def entity_extent(entity: Entity) -> Optional[Tuple[float, float, float, float]]:
@@ -1272,7 +1355,18 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Parse a DXF floor plan into architectural polygons and exploratory artifacts.")
     parser.add_argument("input_dxf", type=Path, help="Path to the source DXF file.")
     parser.add_argument("output_dir", type=Path, help="Directory for JSON, SVG, and report outputs.")
-    parser.add_argument("--snap-tolerance", type=float, default=0.5, help="Endpoint snap tolerance for graph reconstruction.")
+    parser.add_argument(
+        "--snap-tolerance",
+        type=str,
+        default="0.5",
+        help=(
+            "Endpoint snap tolerance for graph reconstruction. "
+            "Accepts a scalar (e.g. '0.5'), a per-family map "
+            "('walls=0.5,columns=0.25,curtain_walls=0.35'), or "
+            "the literal 'adaptive' to pick the elbow of the "
+            "wall-family degree-4+ histogram."
+        ),
+    )
     parser.add_argument("--normalization", type=Path, default=None, help="Path to normalization.json (overrides hardcoded maps).")
     args = parser.parse_args()
 
@@ -1293,9 +1387,12 @@ def main() -> None:
         for layer in missing:
             print(f"WARNING: scoped layer not found in file: {layer}", file=sys.stderr)
 
+    snap_tolerance = resolve_snap_tolerance(args.snap_tolerance, entities=entities)
+    report_tolerance = snap_tolerance_for_report(snap_tolerance)
+
     direct_polygons = extract_direct_polygons(entities)
     graph_segments = [segment for entity in entities for segment in entity_to_segments(entity)]
-    graph_polygons = extract_faces_from_segments(graph_segments, tolerance=args.snap_tolerance)
+    graph_polygons = extract_faces_from_segments(graph_segments, tolerance=snap_tolerance)
     polygons = dedupe_polygons(direct_polygons + graph_polygons)
     runtime_seconds = time.time() - start_time
 
@@ -1304,6 +1401,9 @@ def main() -> None:
         polygons=polygons,
         runtime_seconds=runtime_seconds,
         snap_stats=compute_snap_stats(entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]),
+    )
+    summary["snap_tolerance"] = (
+        dict(snap_tolerance) if isinstance(snap_tolerance, Mapping) else snap_tolerance
     )
     output_json = build_output_json(polygons, entities, runtime_seconds)
 
@@ -1350,7 +1450,7 @@ def main() -> None:
                 polygon_filter=lambda polygon, family=family: polygon.family == family,
             )
 
-    write_wall_connectivity_svg(output_dir / "wall_connectivity_snap_0_5.svg", graph_segments, tolerance=args.snap_tolerance)
+    write_wall_connectivity_svg(output_dir / "wall_connectivity_snap_0_5.svg", graph_segments, tolerance=report_tolerance)
 
     counts = family_polygon_counts(polygons)
     coverage = summary["target_primitive_totals"]["length_coverage_estimate"]
