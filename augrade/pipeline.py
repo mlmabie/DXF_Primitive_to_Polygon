@@ -7,8 +7,8 @@ from pathlib import Path
 
 import tokenize_dxf as td
 
-from . import dashboard_html as build_dashboard
-from . import merge_lab_html as build_merge_lab
+from .review import dashboard as build_dashboard
+from .review import merge_lab as build_merge_lab
 from . import provenance as pu
 from .extract import run_extraction
 

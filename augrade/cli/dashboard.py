@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .. import dashboard_html as _mod
+from ..review import dashboard as _mod
 
 
 def main() -> None:
