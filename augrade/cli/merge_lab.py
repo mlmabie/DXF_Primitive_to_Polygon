@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .. import merge_lab_html as _mod
+from ..review import merge_lab as _mod
 
 
 def main() -> None:

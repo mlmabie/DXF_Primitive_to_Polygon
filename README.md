@@ -1,316 +1,229 @@
 # DXF Primitive-to-Polygon Reconstruction
 
-This repo solves the airport mezzanine take-home with a geometry-first pipeline that reconstructs closed polygons for:
+Airport mezzanine take-home: ~67,000 DXF primitives across ~111 layers,
+no grouping metadata, recover closed polygons grouped by element type.
 
-- walls
-- columns
-- curtain walls / glazing
+The approach is a geometry-first tokenizer:
 
-The core approach is intentionally simple and defensible:
-
+- parse the DXF into primitive carriers
 - extract already-closed carriers directly
 - flatten open linework into a snapped endpoint graph
-- recover bounded faces as polygon candidates
-- filter candidates by family-relevant geometry
-- preserve `source_layers` so every output polygon stays traceable to the raw drafting layers that produced it
+- walk bounded faces on the resulting planar graph
+- filter faces by family-relevant geometry
+- preserve `source_layers` so every polygon stays traceable
 
-The main idea is:
-
-> a DXF is a flat list of drawing primitives, so the task is to recover object-like tokens from geometric grammar rather than assume semantic objects already exist
-
-That is why the code treats:
-
-- primitives as carriers
-- closure as the grammar
-- polygons as tokens
-- family inference as typed semantics on top of closure
-
-## What To Run
-
-### Minimal Solver
-
-This is the simplest path that directly answers the assignment:
+## Run
 
 ```bash
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out
 ```
 
-Optional:
+Stdlib-only. No install step. Default is `--mode conservative`
+(snap = 0.5), which is the documented baseline and matches the
+canonical `out/` bundle in this repo.
+
+The result on the supplied file:
+
+| mode | walls | columns | curtain walls | coverage |
+| --- | --- | --- | --- | --- |
+| conservative (default) | 274 | 572 | 304 | 19.9% |
+| liberal | 288 | 568 | 309 | 20.8% |
+
+Outputs written to `out/`:
+
+- `tokenization_output.json` — graded output (polygons per family, `source_layers`, `vertices`)
+- `analysis_summary.json` — runtime, entity counts, family primitive counts, snap-tolerance sweep, direct-vs-graph-face split, coverage proxy, the resolved mode + snap-tolerance
+- `analysis_report.md` — short human-readable version
+- `raw_all.svg`, `raw_target_families.svg`, `extracted_overlay.svg`, `walls.svg`, `columns.svg`, `curtain_walls.svg`, `wall_connectivity_snap_<tol>.svg`
+
+## How To Read This Repo
+
+Three layers, in this order:
+
+### 1. Direct Solver
+
+Start here for the take-home answer.
+
+- [`tokenize_dxf.py`](tokenize_dxf.py) — stdlib parser + extractor (single file)
+- [`DESIGN.md`](DESIGN.md) — one-page approach + per-family strategy + failure modes
+- [`out/tokenization_output.json`](out/tokenization_output.json) — graded output
+- [`out/extracted_overlay.svg`](out/extracted_overlay.svg) — visual verification
+
+### 2. Supplementary Analysis
+
+Read this if you want to understand the artifact beyond the count.
+
+- [`reference/process/layer_normalization_analysis.md`](reference/process/layer_normalization_analysis.md) — why `FAMILY_LAYER_MAP` pools the hyphen/space variants
+- [`reference/research/programmatic_vs_contextual_merges.md`](reference/research/programmatic_vs_contextual_merges.md) — the two-quotient decomposition with per-family evidence
+- `agent_merge_review.py` + `agent_labels.json` — programmatic labelling of 87 merge candidates (run it; it produces the labels)
+- `python -m augrade.cli.pipeline` — regenerates dashboard + merge lab on demand (not tracked)
+
+This layer is about provenance, drafting variation, merge ambiguity,
+and reviewability. It supports audit and annotation; it is not the
+graded output.
+
+### 3. Future ML Framing
+
+Read this if you want the bridge from the take-home to a learned system.
+
+- [`reference/research/thesis.md`](reference/research/thesis.md) — structured representation alignment, the seven-layer stack, the extension plan
+- [`reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md`](reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md) — the quotient claim sharpened
+- [`reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md`](reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md) — phases 0–8
+
+The geometric solver in layer 1 is a preliminary scaffold. Layers 4+
+are deliberately not built into the take-home; they are sketched as
+the path forward, not pretended into the artifact.
+
+## Operating Modes
+
+Two named modes cover the operating story; they map to a single snap
+tolerance applied uniformly.
+
+| Mode | Snap | When to use |
+| --- | --- | --- |
+| `conservative` (default) | 0.5 | Submission / audit / canonical bundle |
+| `liberal` | 0.75 | Slightly wider snap; recovers a few more candidates with mild over-merging |
 
 ```bash
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode conservative
-```
-
-More liberal:
-
-```bash
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode liberal
 ```
 
-Manual override:
+`0.75` is chosen because `1.0`, `1.5`, and `2.0` distort family counts
+more aggressively (especially columns and curtain walls) for only a
+marginal coverage gain.
+
+### Advanced override: `--snap-tolerance`
+
+For experiments, `--snap-tolerance` overrides `--mode` and accepts:
 
 ```bash
-python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --snap-tolerance 0.5
+# scalar, uniform across all families
+--snap-tolerance 0.5
+
+# per-family map (unspecified families fall back to the mean of provided values)
+--snap-tolerance walls=0.5,columns=0.25,curtain_walls=0.35
+
+# adaptive: elbow of the wall-family degree-4+ histogram, applied uniformly
+--snap-tolerance adaptive
 ```
 
-This writes:
+The adaptive mode picks the elbow via the second-difference maximum
+over `[0.1, 0.25, 0.5, 1.0]`; on this file it returns `0.5`,
+matching `conservative`. This is an advanced surface, not the headline.
 
-- `tokenization_output.json`
-- `analysis_summary.json`
-- `analysis_report.md`
-- `raw_all.svg`
-- `raw_target_families.svg`
-- `extracted_overlay.svg`
-- `walls.svg`
-- `columns.svg`
-- `curtain_walls.svg`
-- `wall_connectivity_snap_0_5.svg`
+## Library, REPL, and review surfaces
 
-### Full Review Bundle
-
-This builds the reproducible analysis bundle around the same extraction:
+The same extraction is packaged so the dashboard, merge lab, REPL, and
+agent-review script all consume one `AnalysisDataset`:
 
 ```bash
-python3 -m augrade.cli.pipeline "Airport Doors_MEZZ.dxf" out --mode conservative
+# full HITL bundle (regenerates dashboard + merge lab; none tracked)
+python3 -m augrade.cli.pipeline "Airport Doors_MEZZ.dxf" out_bundle --mode conservative
+
+# interactive workbench
+python3 -m augrade.repl --input "Airport Doors_MEZZ.dxf" --output out_bundle
+
+# programmatic merge review using the library
+python3 agent_merge_review.py "Airport Doors_MEZZ.dxf"
 ```
 
-This writes:
-
-- extraction JSON
-- SVG overlays
-- provenance index
-- static dashboard
-- merge lab
-- pipeline manifest
-
-Main outputs:
-
-- [`out/tokenization_output.json`](/Users/malachi/augrade_takehome/out/tokenization_output.json)
-- [`out/extracted_overlay.svg`](/Users/malachi/augrade_takehome/out/extracted_overlay.svg)
-- [`out/dashboard.html`](/Users/malachi/augrade_takehome/out/dashboard.html)
-- [`out/merge_lab.html`](/Users/malachi/augrade_takehome/out/merge_lab.html)
-- [`out/provenance_index.json`](/Users/malachi/augrade_takehome/out/provenance_index.json)
-
-### Interactive REPL
-
-The package also includes a stateful workbench:
-
-```bash
-python3 -m augrade.repl --input "Airport Doors_MEZZ.dxf" --output out
-```
-
-## Direct Take-Home Answer
-
-The direct answer to the assignment is the extraction pipeline.
-
-It currently:
-
-- parses `LINE`, `ARC`, `CIRCLE`, `ELLIPSE`, `LWPOLYLINE`, and legacy `POLYLINE`
-- extracts direct closed shapes
-- recovers additional polygons from graph closure
-- outputs clockwise polygon vertex lists
-- reports runtime and primitive-consumption metrics
-- produces visual overlays for review
-
-On the supplied airport file, the current extraction produces:
-
-- `274` walls
-- `572` columns
-- `304` curtain walls
-
-These results are reproducible through the commands above.
-
-## Recommended Operating Modes
-
-Two modes are worth keeping distinct:
-
-### Conservative
-
-```bash
-python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode conservative
-```
-
-This is the best default for review and submission:
-
-- `274` walls
-- `572` columns
-- `304` curtain walls
-- coverage proxy: `19.9%`
-
-It is the most stable setting tested and stays closest to the current documented baseline.
-
-### More Liberal
-
-```bash
-python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode liberal
-```
-
-This is the best second option tested:
-
-- `288` walls
-- `568` columns
-- `309` curtain walls
-- coverage proxy: `20.8%`
-
-Why `0.75` and not `1.0+`:
-
-- `1.0`, `1.5`, and `2.0` slightly improve or match the coverage proxy, but they distort family counts more aggressively, especially for columns and curtain walls.
-- `0.75` gives a modest recovery bump while staying relatively close to the conservative solution.
-
-So the simplest interpretation is:
-
-- `0.5` = submission / audit mode
-- `0.75` = exploratory liberal mode
-
-## What The Analysis Added
-
-The extra work was useful because it improved how the task is defined, not because it made the core algorithm gratuitously complicated.
-
-Three things became clearer during the work:
-
-### 1. Authored Variation Is Real Signal
-
-The file is not just geometry plus random noise.
-
-It contains authored variation:
-
-- layer-schema differences
-- carrier differences (`LINE` vs `LWPOLYLINE`, etc.)
-- decomposition differences
-- drafting-zone / phase differences
-
-That matters because some apparent anomalies are not mistakes. They are alternative representations of the same or related objects.
-
-### 2. Geometry And Grammar Matter Together
-
-The geometric algorithm works because the file still obeys compositional rules:
-
-- endpoints connect
-- boundaries close
-- some families repeat common footprint patterns
-
-So the right mental model is not just “run geometry libraries.”  
-It is “recover valid object tokens from a drawing grammar.”
-
-### 3. Provenance Should Survive
-
-Some normalization is useful, but provenance should not be erased.
-
-The project therefore keeps the distinction:
-
-- pool for geometry where helpful
-- preserve raw source-layer provenance for audit, debugging, and future learning
-
-That is important for:
-
-- explaining the output to a human reviewer
-- distinguishing drafting convention from structural signal
-- defining future annotation workflows
-
-## Supplementary Work
-
-These are supplementary to the direct take-home answer, but they are not random extras. They support auditability, annotation, and future learned systems work.
-
-### Normalization / Provenance
-
-- [`augrade/normalize.py`](augrade/normalize.py)
-- [`augrade/provenance.py`](augrade/provenance.py)
-- [`reference/process/layer_etymology.md`](/Users/malachi/augrade_takehome/reference/process/layer_etymology.md)
-- [`reference/process/layer_normalization_analysis.md`](/Users/malachi/augrade_takehome/reference/process/layer_normalization_analysis.md)
-
-These were useful for understanding:
-
-- naming anomalies
-- layer-schema variants
-- complementary representations
-- why some surface differences should not be treated as separate object truth
-
-### Dashboard / Merge Lab
-
-- [`out/dashboard.html`](/Users/malachi/augrade_takehome/out/dashboard.html)
-- [`out/merge_lab.html`](/Users/malachi/augrade_takehome/out/merge_lab.html)
-
-These provide:
-
-- reproducible visual review
-- provenance inspection
-- merge-candidate inspection
-- expert labeling workflow
-
-They are meant as review and annotation tools, not the centerpiece of the submission.
-
-### Research / Theory Docs
-
-- [`reference/process/PROCESS_JOURNAL.md`](/Users/malachi/augrade_takehome/reference/process/PROCESS_JOURNAL.md)
-- [`reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md`](/Users/malachi/augrade_takehome/reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md)
-- [`reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md`](/Users/malachi/augrade_takehome/reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md)
-- [`reference/research/bigger_picture.md`](/Users/malachi/augrade_takehome/reference/research/bigger_picture.md)
-
-These connect the take-home to the broader ML direction:
-
-- geometric primitives as first useful tokens
-- quotienting authored drafting rewrites
-- typed object/relation state
-- annotation workflows for future learned merge and graph models
-
-## How To Explain This To A Structural Engineer
-
-The simplest explanation is:
-
-- a DXF does not store semantic wall or column objects
-- it stores drafting primitives
-- the task is to reconstruct the closed footprints a human would recognize as elements
-
-Per family:
-
-- columns are easiest because many are already circles or compact closed outlines
-- curtain-wall elements often appear as regular panel footprints
-- walls are hardest because they are mostly fragmented linework and junctions
-
-The algorithm therefore:
-
-1. takes the obvious closed shapes directly
-2. reconstructs additional footprints from connectivity
-3. filters them by family-relevant geometry
-4. preserves source provenance so the output stays explainable
-
-## Current Limits
-
-The current solver does not fully handle:
+The library exists to make the extraction reusable — it is not the
+main act. Review surfaces live in [`augrade/review/`](augrade/review/)
+as a subpackage so `augrade/extract.py`, `augrade/geometry.py`,
+`augrade/dataset.py`, `augrade/merge.py`, and `augrade/provenance.py`
+can be read without paging through ~2500 lines of HTML generator. The
+generated HTML/JSON dumps (`dashboard.html`, `merge_lab.html`,
+`merge_lab_data.json`, `dashboard_assets/`, `provenance_index.json`,
+`pipeline_manifest.json`) are gitignored — regenerate via the
+pipeline command above.
+
+## What the analysis found
+
+The file is not geometry plus random noise. It is authored variation
+over a stable object structure: layer-schema differences, carrier
+differences (`LINE` vs `LWPOLYLINE` vs `HATCH` vs `CIRCLE`),
+decomposition differences, drafting-zone differences. Three concrete
+findings fed back into the solver's defaults:
+
+1. **Cross-layer pooling is real.** `A-GLAZING MULLION` (`LINE`-only)
+   and `A-GLAZING-MULLION` (`LWPOLYLINE`-only) are the same physical
+   mullions drawn with different CAD conventions, ~97% spatial
+   overlap. That is why `FAMILY_LAYER_MAP["curtain_walls"]` pools both.
+
+2. **Merges factor into two quotients.** A programmatic quotient
+   decidable from provenance alone (same `canonical_layer` + gap ≈ 0
+   + different `source_kind`) and a contextual quotient that needs
+   neighborhood reasoning. On this file 29/29 curtain-wall merges are
+   programmatic; only 1/28 wall merges are.
+
+3. **Snap tolerance has an elbow.** The wall-family degree-4+
+   histogram has a discernible elbow around 0.5; `0.75` recovers a few
+   more polygons at the cost of some merge precision. The two named
+   modes encode this directly.
+
+The slogan tying these together is **"pool for geometry, tag for
+provenance"** — align cross-domain views (layer variants, carrier
+choices, decomposition conventions) at the semantic level, preserve
+domain discernibility as a residual side channel. That is the same
+shape as *structured representation alignment* in the co-training
+literature, applied to authored drafting rewrites rather than the
+sim-to-real gap. Full framing in
+[`reference/research/thesis.md`](reference/research/thesis.md).
+
+## Current limits
+
+Not yet handled:
 
 - `HATCH` boundary extraction as first-class polygons
 - `INSERT` explosion
 - `SPLINE`
-- exact bulge handling for all polyline curvature
-- second-pass merge logic for fragmented wall runs
-- explicit glazing-grid recovery
+- exact bulge for all polyline curvature
+- second-pass merge for fragmented wall runs (deferred to the learned layer)
+- explicit glazing-grid recovery (likewise)
 
-Those are natural next steps, not hidden assumptions.
+These are the natural next steps, not hidden assumptions.
 
-## Repo Structure
+## Repo layout
 
-- [`tokenize_dxf.py`](tokenize_dxf.py): minimal submission entry point
-- [`augrade/`](augrade/): package implementation
-- [`augrade/cli/`](augrade/cli/): CLI shims
-- [`reference/`](reference/): process, research, and experiment docs
-- [`out/`](out/): canonical generated bundle
+```
+tokenize_dxf.py                       stdlib solver (reviewer entry point)
+DESIGN.md                             one-page approach + failure modes
+README.md                             this file
+requirements.txt                      stdlib note (+ optional ezdxf for two library modules)
+agent_merge_review.py                 programmatic merge review via the library
+agent_labels.json                     87 auto-labels produced by the above
 
-## Bottom Line
+augrade/                              library and review surfaces
+  __init__.py
+  extract.py                          ExtractionResult facade
+  geometry.py                         geometric helpers
+  dataset.py                          AnalysisDataset (shared compute)
+  merge.py                            FAMILY_PRESETS, pair scoring
+  provenance.py                       raw-layer table + variant groups
+  normalize.py                        layer-schema anomaly detection
+  emit_dxf.py                         cleaned-DXF output (optional)
+  pipeline.py                         one-shot full bundle
+  repl.py                             interactive workbench
+  cli/                                thin CLI shims
+  review/                             isolated HITL: dashboard, merge lab, labels
 
-This repo should be read in two layers:
+reference/
+  research/thesis.md                  framing + extension plan
+  research/programmatic_vs_contextual_merges.md
+  process/layer_normalization_analysis.md
+  experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md
+  experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md
 
-### Submission-facing
+out/                                  canonical generated bundle (SVGs + JSON + report)
+```
 
-- transparent geometry-first solver
-- reproducible outputs
-- visual verification
+## Bottom line
 
-### Supplementary
-
-- provenance and normalization analysis
-- dashboard and merge-lab review tools
-- annotation path for future learned merge / graph work
-
-The core claim is simple:
-
-> I solved the take-home with a transparent geometric pipeline, and I used provenance-aware analysis to understand drafting variation without mistaking it for structural truth.
+A single stdlib command produces the graded polygons; a library, REPL,
+and isolated review subpackage sit next to it for the HITL loop the
+extension plan depends on; the reference docs frame the whole thing
+as structured representation alignment and lay out what the next
+layers of the stack look like. The defaults, pooling choices, and
+mode names in the solver are defended by the findings in the
+reference docs, not chosen by hand.
