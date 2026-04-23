@@ -300,15 +300,15 @@ class AugradeShell(cmd.Cmd):
         if dataset is None:
             return
         if kind == "dashboard":
-            from . import dashboard_html
+            from .review import dashboard
 
             target.mkdir(parents=True, exist_ok=True)
             (target / "dashboard_assets").mkdir(exist_ok=True)
-            dashboard_html.render_dashboard(dataset, target)
+            dashboard.render_dashboard(dataset, target)
             print(f"wrote dashboard to {target / 'dashboard.html'}")
             return
         if kind == "merge-lab":
-            from . import merge_lab_html
+            from .review import merge_lab
 
             target.mkdir(parents=True, exist_ok=True)
             payload = _ds.merge_lab_payload(dataset)
@@ -316,7 +316,7 @@ class AugradeShell(cmd.Cmd):
                 json.dumps(payload, indent=2), encoding="utf-8"
             )
             (target / "merge_lab.html").write_text(
-                merge_lab_html.build_html(payload), encoding="utf-8"
+                merge_lab.build_html(payload), encoding="utf-8"
             )
             print(f"wrote merge lab to {target / 'merge_lab.html'}")
             return
@@ -354,15 +354,15 @@ class AugradeShell(cmd.Cmd):
             _pipeline.write_tokenization_bundle(
                 self.state.input_dxf, target, self.state.snap_tolerance
             )
-            from . import dashboard_html, merge_lab_html
+            from .review import dashboard, merge_lab
 
-            dashboard_html.render_dashboard(dataset, target)
+            dashboard.render_dashboard(dataset, target)
             payload = _ds.merge_lab_payload(dataset)
             (target / "merge_lab_data.json").write_text(
                 json.dumps(payload, indent=2), encoding="utf-8"
             )
             (target / "merge_lab.html").write_text(
-                merge_lab_html.build_html(payload), encoding="utf-8"
+                merge_lab.build_html(payload), encoding="utf-8"
             )
             print(f"wrote full bundle to {target}")
             return

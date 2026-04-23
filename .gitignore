@@ -2,3 +2,16 @@ __pycache__/
 *.pyc
 .DS_Store
 .verify-venv/
+
+# Generated review artifacts and per-run outputs.
+# The dashboard, merge lab, and their JSON dumps are easily regenerated
+# via `python -m augrade.cli.pipeline <dxf> <out>` or the individual
+# CLI shims; committing them bloats the repo and inflates line counts.
+out/dashboard.html
+out/merge_lab.html
+out/merge_lab_data.json
+out/provenance_index.json
+out/pipeline_manifest.json
+out/dashboard_assets/
+out/verify/
+out/**/*.png
