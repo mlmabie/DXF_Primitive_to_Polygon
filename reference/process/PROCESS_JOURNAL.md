@@ -541,6 +541,53 @@ This is enough for Phase 1 of the experiment checklist (target was 30+ per famil
 - [`agent_merge_review.py`](/Users/malachi/augrade_takehome/agent_merge_review.py): Self-documenting script. Run it, read the output, import labels into merge lab.
 - [`agent_labels.json`](/Users/malachi/augrade_takehome/agent_labels.json): 87 labels ready for merge lab import.
 
+---
+
+## Operating Mode Sweep (2026-04-16)
+
+Benchmarked the current extractor across snap tolerances to test whether the default `0.5"` setting is still the best overall operating point or whether a second, more liberal mode should be kept available.
+
+### Coverage Proxy And Counts
+
+| Snap | Walls | Columns | Curtain Walls | Coverage Proxy |
+|------|------:|--------:|--------------:|---------------:|
+| 0.25 | 276 | 574 | 271 | 20.33% |
+| 0.50 | 274 | 572 | 304 | 19.93% |
+| 0.75 | 288 | 568 | 309 | 20.79% |
+| 1.00 | 283 | 543 | 326 | 20.65% |
+| 1.50 | 286 | 554 | 317 | 20.60% |
+| 2.00 | 292 | 544 | 316 | 21.13% |
+
+### Interpretation
+
+- `0.5"` remains the best **conservative** setting.
+  - It is the documented baseline.
+  - It keeps family counts stable.
+  - It is the safest choice for submission-facing review.
+
+- `0.75"` is the best **more liberal** setting.
+  - It improves the coverage proxy without the bigger class distortions seen at `1.0"+`.
+  - It increases wall and curtain-wall recovery modestly while staying relatively close to the conservative output.
+
+- `1.0"` and above are not obviously better despite slightly competitive coverage values.
+  - Column counts drift more aggressively.
+  - Curtain-wall counts inflate more sharply.
+  - The small gain in coverage proxy is not worth the extra ambiguity for the default mode.
+
+### Recommendation
+
+Keep two named modes:
+
+- **conservative** = `0.5"`
+- **liberal** = `0.75"`
+
+This gives the project:
+
+- one clean submission / audit mode
+- one exploratory mode for broader recovery
+
+without pretending that a single snap tolerance is optimal for every use case.
+
 
 ### Dependency sketch
 

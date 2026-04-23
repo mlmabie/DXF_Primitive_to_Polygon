@@ -1,5 +1,6 @@
 {
   "input_file": "Airport Doors_MEZZ.dxf",
+  "mode": "conservative",
   "snap_tolerance": 0.5,
   "polygon_counts": {
     "walls": 274,

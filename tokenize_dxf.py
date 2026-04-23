@@ -14,6 +14,11 @@ from typing import Dict, Iterable, Iterator, List, Optional, Sequence, Tuple
 
 Point = Tuple[float, float]
 
+SNAP_TOLERANCE_MODES: Dict[str, float] = {
+    "conservative": 0.5,
+    "liberal": 0.75,
+}
+
 
 FAMILY_LAYER_MAP = {
     "walls": {
@@ -1272,9 +1277,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Parse a DXF floor plan into architectural polygons and exploratory artifacts.")
     parser.add_argument("input_dxf", type=Path, help="Path to the source DXF file.")
     parser.add_argument("output_dir", type=Path, help="Directory for JSON, SVG, and report outputs.")
-    parser.add_argument("--snap-tolerance", type=float, default=0.5, help="Endpoint snap tolerance for graph reconstruction.")
+    parser.add_argument("--mode", choices=sorted(SNAP_TOLERANCE_MODES), default="conservative", help="Named extraction preset. conservative=0.5, liberal=0.75.")
+    parser.add_argument("--snap-tolerance", type=float, default=None, help="Endpoint snap tolerance for graph reconstruction. Overrides --mode when provided.")
     parser.add_argument("--normalization", type=Path, default=None, help="Path to normalization.json (overrides hardcoded maps).")
     args = parser.parse_args()
+    effective_snap_tolerance = args.snap_tolerance if args.snap_tolerance is not None else SNAP_TOLERANCE_MODES[args.mode]
 
     # Load normalization output if provided — makes it the source of truth for maps
     norm = load_normalization(args.normalization)
@@ -1295,7 +1302,7 @@ def main() -> None:
 
     direct_polygons = extract_direct_polygons(entities)
     graph_segments = [segment for entity in entities for segment in entity_to_segments(entity)]
-    graph_polygons = extract_faces_from_segments(graph_segments, tolerance=args.snap_tolerance)
+    graph_polygons = extract_faces_from_segments(graph_segments, tolerance=effective_snap_tolerance)
     polygons = dedupe_polygons(direct_polygons + graph_polygons)
     runtime_seconds = time.time() - start_time
 
@@ -1350,7 +1357,8 @@ def main() -> None:
                 polygon_filter=lambda polygon, family=family: polygon.family == family,
             )
 
-    write_wall_connectivity_svg(output_dir / "wall_connectivity_snap_0_5.svg", graph_segments, tolerance=args.snap_tolerance)
+    suffix = str(effective_snap_tolerance).replace(".", "_")
+    write_wall_connectivity_svg(output_dir / f"wall_connectivity_snap_{suffix}.svg", graph_segments, tolerance=effective_snap_tolerance)
 
     counts = family_polygon_counts(polygons)
     coverage = summary["target_primitive_totals"]["length_coverage_estimate"]
