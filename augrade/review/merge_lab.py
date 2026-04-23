@@ -187,7 +187,7 @@ def build_html(dataset: Dict[str, object]) -> str:
     }}
     .summary-grid {{
       display: grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 10px;
       align-items: stretch;
     }}
@@ -1004,11 +1004,13 @@ def build_html(dataset: Dict[str, object]) -> str:
       const singles = components.components.filter(component => component.members.length === 1).length;
       const familyProv = payload.provenance.family_summary;
       const multiLayer = payload.polygons.filter(poly => poly.source_layers.length > 1).length;
+      const hatchDirect = payload.polygons.filter(poly => poly.source_kind === 'direct_hatch').length;
       summaryGrid.innerHTML = [
         metricCard('Family', FAMILY_LABELS[currentFamily], 'Rules and notes in sidebar', FAMILY_COLORS[currentFamily]),
         metricCard('Candidates', fmtInt(payload.stats.candidate_count), `${{fmtInt(accepted.length)}} accepted / ${{fmtInt(review.length)}} borderline`, '#111'),
         metricCard('Components', fmtInt(components.components.length), `${{fmtInt(singles)}} singletons`, '#555'),
         metricCard('Largest Cluster', fmtInt(biggest), 'max merged component size', '#c05f00'),
+        metricCard('HATCH polygons', fmtInt(hatchDirect), 'tokens with source_kind direct_hatch', '#1c7c54'),
         metricCard('Raw Layers', fmtInt(familyProv.raw_layer_count), 'scoped source layers for this family', '#7c4dff'),
         metricCard('Variant Groups', fmtInt(familyProv.variant_group_count), `${{fmtInt(familyProv.multi_variant_group_count)}} multi-variant groups`, '#9c6644'),
         metricCard('Multi-Layer Polygons', fmtInt(multiLayer), 'recovered tokens with more than one raw layer', '#007f5f'),
@@ -1528,7 +1530,9 @@ def build_html(dataset: Dict[str, object]) -> str:
 
     function render() {{
       familyNote.textContent = DATA.families[currentFamily].note;
-      metaLine.textContent = `${{DATA.meta.input_file}} | snap tolerance ${{DATA.meta.snap_tolerance}} | generated in ${{fmt(DATA.meta.generated_runtime_seconds, 2)}}s`;
+      const he = DATA.meta.hatch_extraction || {{}};
+      const hatchFile = he.direct_hatch_polygons != null ? ` | file HATCH polygons: ${{fmtInt(he.direct_hatch_polygons)}}` : '';
+      metaLine.textContent = `${{DATA.meta.input_file}} | snap tolerance ${{DATA.meta.snap_tolerance}} | generated in ${{fmt(DATA.meta.generated_runtime_seconds, 2)}}s${{hatchFile}}`;
       evaluatedState = evaluateCandidates();
       ensureSelection(evaluatedState);
       const components = buildComponents(evaluatedState);

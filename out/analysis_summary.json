@@ -1,5 +1,5 @@
 {
-  "runtime_seconds": 2.613206624984741,
+  "runtime_seconds": 2.5627810955047607,
   "entity_type_counts": {
     "LINE": 58128,
     "LWPOLYLINE": 3408,
@@ -41,8 +41,8 @@
     "A-WALL 2": 302
   },
   "family_entity_counts": {
-    "walls": 16920,
-    "columns": 9208,
+    "walls": 18382,
+    "columns": 9739,
     "curtain_walls": 8706
   },
   "target_layer_type_counts": {
@@ -57,6 +57,9 @@
       "LINE": 9189,
       "LWPOLYLINE": 1,
       "POINT": 40
+    },
+    "A-EXTERNAL WALL HATCH": {
+      "HATCH": 24
     },
     "A-GLAZING ARRAY": {
       "LINE": 35
@@ -94,6 +97,11 @@
       "LINE": 2275,
       "LWPOLYLINE": 1234
     },
+    "A-MEZZANINE WALL FULL HATCH": {
+      "HATCH": 1276,
+      "LINE": 24,
+      "LWPOLYLINE": 1
+    },
     "A-PARTITION WALL": {
       "3DFACE": 137,
       "LINE": 79
@@ -102,10 +110,18 @@
       "3DFACE": 1,
       "LINE": 46
     },
+    "A-WALL 1 HATCH": {
+      "HATCH": 11
+    },
     "A-WALL 2": {
       "ARC": 31,
       "LINE": 91,
       "LWPOLYLINE": 180
+    },
+    "A-WALL 2 HATCH": {
+      "HATCH": 93,
+      "LINE": 30,
+      "LWPOLYLINE": 3
     },
     "A-WALL NICHE": {
       "LINE": 4
@@ -127,6 +143,10 @@
       "LINE": 916,
       "LWPOLYLINE": 338
     },
+    "S-COLUMN HATCH": {
+      "HATCH": 451,
+      "LINE": 5
+    },
     "S-COLUMN PROTECTION": {
       "ARC": 24,
       "LINE": 1722,
@@ -136,6 +156,9 @@
       "CIRCLE": 34,
       "LINE": 3458,
       "LWPOLYLINE": 477
+    },
+    "S-CONCRETE COLUMN HATCH": {
+      "HATCH": 15
     },
     "S-CONCRETE WALL": {
       "LINE": 2719
@@ -147,55 +170,72 @@
       "LWPOLYLINE": 18,
       "POLYLINE": 2
     },
+    "S-STEEL COLUMN HATCH": {
+      "HATCH": 60
+    },
     "S-STEEL POST": {
       "ELLIPSE": 424,
       "LINE": 480
     }
   },
   "polygon_counts": {
-    "walls": 274,
-    "columns": 572,
+    "walls": 1158,
+    "columns": 764,
     "curtain_walls": 304
   },
   "graph_vs_direct_counts": {
-    "direct": 699,
-    "graph_face": 451
+    "direct": 1790,
+    "graph_face": 436
+  },
+  "source_kind_counts": {
+    "direct_hatch": 1453,
+    "graph_face": 436,
+    "direct_lwpolyline": 294,
+    "direct_circle": 35,
+    "direct_ellipse": 8
+  },
+  "hatch_extraction": {
+    "entities": 1934,
+    "parsed_paths": 2278,
+    "outer_candidate_paths": 2222,
+    "skipped_hole_or_default_paths": 56,
+    "direct_hatch_polygons": 1453
   },
   "target_primitive_totals": {
-    "count": 34834,
-    "length_total": 1144751.426,
-    "count_consumed": 2980,
-    "length_consumed": 228196.808,
-    "length_coverage_estimate": 0.1993
+    "count": 36827,
+    "length_total": 1967355.755,
+    "count_consumed": 4473,
+    "length_consumed": 1010862.297,
+    "length_coverage_estimate": 0.5138
   },
   "wall_snap_stats": {
     "0.1": {
-      "nodes": 20357,
-      "degree_1": 7425,
-      "degree_2": 9780,
-      "degree_3": 1196,
-      "degree_4_plus": 1956
+      "nodes": 20398,
+      "degree_1": 7419,
+      "degree_2": 9808,
+      "degree_3": 1208,
+      "degree_4_plus": 1963
     },
     "0.25": {
-      "nodes": 17143,
-      "degree_1": 6707,
-      "degree_2": 7471,
-      "degree_3": 833,
-      "degree_4_plus": 2132
+      "nodes": 17181,
+      "degree_1": 6696,
+      "degree_2": 7499,
+      "degree_3": 848,
+      "degree_4_plus": 2138
     },
     "0.5": {
-      "nodes": 15039,
-      "degree_1": 5427,
-      "degree_2": 7338,
-      "degree_3": 662,
-      "degree_4_plus": 1612
+      "nodes": 15077,
+      "degree_1": 5417,
+      "degree_2": 7365,
+      "degree_3": 676,
+      "degree_4_plus": 1619
     },
     "1.0": {
-      "nodes": 13201,
-      "degree_1": 4302,
-      "degree_2": 6838,
-      "degree_3": 708,
-      "degree_4_plus": 1353
+      "nodes": 13237,
+      "degree_1": 4289,
+      "degree_2": 6865,
+      "degree_3": 723,
+      "degree_4_plus": 1360
     }
   },
   "mode": "conservative",

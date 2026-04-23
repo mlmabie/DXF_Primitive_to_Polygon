@@ -15,3 +15,5 @@ out/pipeline_manifest.json
 out/dashboard_assets/
 out/verify/
 out/**/*.png
+out_liberal/
+out_samples/

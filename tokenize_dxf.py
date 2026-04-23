@@ -29,9 +29,13 @@ SNAP_TOLERANCE_MODES: Dict[str, float] = {
 FAMILY_LAYER_MAP = {
     "walls": {
         "A-EXTERNAL WALL",
+        "A-EXTERNAL WALL HATCH",
         "A-MEZZANINE WALL FULL",
+        "A-MEZZANINE WALL FULL HATCH",
         "A-WALL 1",
+        "A-WALL 1 HATCH",
         "A-WALL 2",
+        "A-WALL 2 HATCH",
         "A-PARTITION WALL",
         "A-WALL PARAPET",
         "A-WALL NICHE",
@@ -42,8 +46,11 @@ FAMILY_LAYER_MAP = {
     "columns": {
         "S-STEEL POST",
         "S-STEEL COLUMN",
+        "S-STEEL COLUMN HATCH",
         "S-COLUMN",
+        "S-COLUMN HATCH",
         "S-CONCRETE COLUMN",
+        "S-CONCRETE COLUMN HATCH",
         "S-COLUMN PROTECTION",
     },
     "curtain_walls": {
@@ -68,10 +75,14 @@ CANONICAL_FAMILY_LAYERS = {
 # AIA-grammar-aware polygon ID prefixes (see layer_etymology.md)
 LAYER_ID_PREFIX: Dict[str, str] = {
     "A-EXTERNAL WALL":          "a_wall_ext",
+    "A-EXTERNAL WALL HATCH":    "a_wall_ext_hatch",
     "A-MEZZANINE WALL FULL":    "a_wall_mezz_full",
+    "A-MEZZANINE WALL FULL HATCH": "a_wall_mezz_full_hatch",
     "A-MEZZANINE WALL FINISH":  "a_wall_mezz_fin",
     "A-WALL 1":                 "a_wall_v1",
+    "A-WALL 1 HATCH":           "a_wall_v1_hatch",
     "A-WALL 2":                 "a_wall_v2",
+    "A-WALL 2 HATCH":           "a_wall_v2_hatch",
     "A-PARTITION WALL":         "a_wall_part",
     "A-WALL PARAPET":           "a_wall_parapet",
     "A-WALL NICHE":             "a_wall_niche",
@@ -79,8 +90,11 @@ LAYER_ID_PREFIX: Dict[str, str] = {
     "S-CONCRETE WALL":          "s_wall_conc",
     "S-STEEL POST":             "s_post_steel",
     "S-STEEL COLUMN":           "s_col_steel",
+    "S-STEEL COLUMN HATCH":     "s_col_steel_hatch",
     "S-COLUMN":                 "s_col",
+    "S-COLUMN HATCH":           "s_col_hatch",
     "S-CONCRETE COLUMN":        "s_col_conc",
+    "S-CONCRETE COLUMN HATCH": "s_col_conc_hatch",
     "S-COLUMN PROTECTION":      "s_col_prot",
     "A-GLAZING MULLION":        "a_glaz_mull",
     "A-GLAZING-MULLION":        "a_glaz_mull",
@@ -107,6 +121,21 @@ FAMILY_COLORS = {
 }
 
 
+HATCH_PATH_EXTERNAL = 1
+HATCH_PATH_POLYLINE = 2
+HATCH_PATH_OUTERMOST = 16
+
+
+@dataclass
+class HatchBoundaryPath:
+    flags: int
+    points: List[Point]
+
+    @property
+    def is_outer_candidate(self) -> bool:
+        return bool(self.flags & (HATCH_PATH_EXTERNAL | HATCH_PATH_OUTERMOST))
+
+
 @dataclass
 class Entity:
     entity_id: str
@@ -126,6 +155,7 @@ class Entity:
     ratio: Optional[float] = None
     start_param: Optional[float] = None
     end_param: Optional[float] = None
+    hatch_paths: List[HatchBoundaryPath] = field(default_factory=list)
 
 
 @dataclass
@@ -310,6 +340,10 @@ def finalize_entity(entity_id: str, entity_type: str, tags: Sequence[Tuple[int, 
                 break
         entity.points = parse_lwpolyline_points(tags)
         entity.closed = bool(flags & 1) or polyline_is_closed([(x, y) for x, y, _ in entity.points])
+
+    elif entity_type == "HATCH":
+        entity.hatch_paths = parse_hatch_boundary_paths(tags)
+        entity.closed = bool(entity.hatch_paths)
 
     return entity
 
@@ -626,6 +660,308 @@ def approximate_ellipse(entity: Entity, step_count: int = 64) -> List[Point]:
     return points
 
 
+def _append_connected_path(ring: List[Point], path: Sequence[Point], tolerance: float = 1e-4) -> None:
+    if not path:
+        return
+    if not ring:
+        ring.extend(path)
+        return
+    if distance(ring[-1], path[0]) <= tolerance:
+        ring.extend(path[1:])
+    else:
+        ring.extend(path)
+
+
+def _edge_candidate_endpoints(candidates: Sequence[Sequence[Point]]) -> List[Point]:
+    endpoints: List[Point] = []
+    for candidate in candidates:
+        if candidate:
+            endpoints.append(candidate[0])
+            endpoints.append(candidate[-1])
+    return endpoints
+
+
+def _choose_initial_hatch_edge(candidates_by_edge: Sequence[Sequence[List[Point]]]) -> List[Point]:
+    first_candidates = candidates_by_edge[0]
+    if len(candidates_by_edge) == 1:
+        return first_candidates[0] if first_candidates else []
+
+    previous_endpoints = _edge_candidate_endpoints(candidates_by_edge[-1])
+    next_endpoints = _edge_candidate_endpoints(candidates_by_edge[1])
+
+    def score(candidate: Sequence[Point]) -> float:
+        if not candidate:
+            return float("inf")
+        previous_score = (
+            min(distance(candidate[0], point) for point in previous_endpoints)
+            if previous_endpoints
+            else 0.0
+        )
+        next_score = (
+            min(distance(candidate[-1], point) for point in next_endpoints)
+            if next_endpoints
+            else 0.0
+        )
+        return previous_score + next_score
+
+    return min(first_candidates, key=score) if first_candidates else []
+
+
+def _concatenate_hatch_edge_candidates(candidates_by_edge: Sequence[Sequence[List[Point]]]) -> List[Point]:
+    if not candidates_by_edge or any(not candidates for candidates in candidates_by_edge):
+        return []
+
+    ring: List[Point] = []
+    for index, candidates in enumerate(candidates_by_edge):
+        if index == 0:
+            chosen = _choose_initial_hatch_edge(candidates_by_edge)
+        else:
+            chosen = min(candidates, key=lambda candidate: distance(ring[-1], candidate[0]) if candidate else float("inf"))
+        _append_connected_path(ring, chosen)
+
+    return close_ring(ring)
+
+
+def _parse_hatch_line_edge(tags: Sequence[Tuple[int, str]], index: int) -> Tuple[List[List[Point]], int]:
+    x1 = y1 = x2 = y2 = None
+    while index < len(tags) and None in (x1, y1, x2, y2):
+        code, raw = tags[index]
+        if code == 10:
+            x1 = parse_float(raw)
+        elif code == 20:
+            y1 = parse_float(raw)
+        elif code == 11:
+            x2 = parse_float(raw)
+        elif code == 21:
+            y2 = parse_float(raw)
+        index += 1
+    if None in (x1, y1, x2, y2):
+        return [], index
+    path = [(x1, y1), (x2, y2)]
+    return [path, list(reversed(path))], index
+
+
+def _approximate_hatch_arc(
+    center: Point,
+    radius: float,
+    start_angle: float,
+    end_angle: float,
+    ccw: bool,
+    max_step_degrees: float = 15.0,
+) -> List[Point]:
+    start_radians = math.radians(start_angle)
+    end_radians = math.radians(end_angle)
+    sweep = end_radians - start_radians
+    if ccw:
+        while sweep <= 0:
+            sweep += 2 * math.pi
+    else:
+        while sweep >= 0:
+            sweep -= 2 * math.pi
+    step_count = max(2, int(math.ceil(abs(math.degrees(sweep)) / max_step_degrees)))
+    points = []
+    for step in range(step_count + 1):
+        t = start_radians + sweep * step / step_count
+        points.append((center[0] + radius * math.cos(t), center[1] + radius * math.sin(t)))
+    return points
+
+
+def _parse_hatch_arc_edge(tags: Sequence[Tuple[int, str]], index: int) -> Tuple[List[List[Point]], int]:
+    cx = cy = radius = start_angle = end_angle = ccw = None
+    while index < len(tags) and None in (cx, cy, radius, start_angle, end_angle, ccw):
+        code, raw = tags[index]
+        if code == 10:
+            cx = parse_float(raw)
+        elif code == 20:
+            cy = parse_float(raw)
+        elif code == 40:
+            radius = parse_float(raw)
+        elif code == 50:
+            start_angle = parse_float(raw)
+        elif code == 51:
+            end_angle = parse_float(raw)
+        elif code == 73:
+            ccw = parse_int(raw)
+        index += 1
+    if None in (cx, cy, radius, start_angle, end_angle, ccw):
+        return [], index
+    center = (cx, cy)
+    candidates: List[List[Point]] = []
+    for angle_sign in (1.0, -1.0):
+        path = _approximate_hatch_arc(
+            center,
+            radius,
+            angle_sign * start_angle,
+            angle_sign * end_angle,
+            ccw=bool(ccw),
+        )
+        if path:
+            candidates.append(path)
+            candidates.append(list(reversed(path)))
+    return candidates, index
+
+
+def _hatch_ellipse_candidate(
+    center: Point,
+    major_axis: Point,
+    ratio: float,
+    start_angle: float,
+    end_angle: float,
+) -> List[Point]:
+    entity = Entity(
+        entity_id="_hatch_ellipse",
+        type="ELLIPSE",
+        layer="",
+        family=None,
+        center=center,
+        major_axis=major_axis,
+        ratio=ratio,
+        start_param=math.radians(start_angle),
+        end_param=math.radians(end_angle),
+    )
+    return approximate_ellipse(entity)
+
+
+def _parse_hatch_ellipse_edge(tags: Sequence[Tuple[int, str]], index: int) -> Tuple[List[List[Point]], int]:
+    cx = cy = major_x = major_y = ratio = start_angle = end_angle = ccw = None
+    while index < len(tags) and None in (cx, cy, major_x, major_y, ratio, start_angle, end_angle, ccw):
+        code, raw = tags[index]
+        if code == 10:
+            cx = parse_float(raw)
+        elif code == 20:
+            cy = parse_float(raw)
+        elif code == 11:
+            major_x = parse_float(raw)
+        elif code == 21:
+            major_y = parse_float(raw)
+        elif code == 40:
+            ratio = parse_float(raw)
+        elif code == 50:
+            start_angle = parse_float(raw)
+        elif code == 51:
+            end_angle = parse_float(raw)
+        elif code == 73:
+            ccw = parse_int(raw)
+        index += 1
+    if None in (cx, cy, major_x, major_y, ratio, start_angle, end_angle, ccw):
+        return [], index
+    if ccw == 0:
+        start_angle, end_angle = end_angle, start_angle
+
+    center = (cx, cy)
+    candidates: List[List[Point]] = []
+    for major_axis in ((major_x, major_y), (-major_x, -major_y)):
+        path = _hatch_ellipse_candidate(center, major_axis, ratio, start_angle, end_angle)
+        if path:
+            candidates.append(path)
+            candidates.append(list(reversed(path)))
+    return candidates, index
+
+
+def _parse_hatch_polyline_path(tags: Sequence[Tuple[int, str]], index: int) -> Tuple[List[Point], int]:
+    path_tags: List[Tuple[int, str]] = []
+    vertex_count: Optional[int] = None
+    while index < len(tags):
+        code, raw = tags[index]
+        path_tags.append((code, raw))
+        index += 1
+        if code == 93:
+            vertex_count = parse_int(raw)
+            break
+        if code == 92:
+            return [], index - 1
+
+    if vertex_count is None:
+        return [], index
+
+    vertices_seen = 0
+    awaiting_y = False
+    while index < len(tags) and vertices_seen < vertex_count:
+        code, raw = tags[index]
+        path_tags.append((code, raw))
+        index += 1
+        if code == 10:
+            awaiting_y = True
+        elif code == 20 and awaiting_y:
+            vertices_seen += 1
+            awaiting_y = False
+
+    while index < len(tags) and tags[index][0] == 42:
+        path_tags.append(tags[index])
+        index += 1
+
+    points = parse_lwpolyline_points(path_tags)
+    return close_ring(flatten_polyline_points(points, closed=True)), index
+
+
+def _parse_hatch_edge_path(tags: Sequence[Tuple[int, str]], index: int) -> Tuple[List[Point], int]:
+    edge_count: Optional[int] = None
+    while index < len(tags):
+        code, raw = tags[index]
+        index += 1
+        if code == 93:
+            edge_count = parse_int(raw)
+            break
+        if code == 92:
+            return [], index - 1
+
+    if edge_count is None:
+        return [], index
+
+    candidates_by_edge: List[List[List[Point]]] = []
+    for _ in range(edge_count):
+        while index < len(tags) and tags[index][0] != 72:
+            if tags[index][0] in {92, 75, 76, 98, 450}:
+                return _concatenate_hatch_edge_candidates(candidates_by_edge), index
+            index += 1
+        if index >= len(tags):
+            break
+
+        edge_type = parse_int(tags[index][1])
+        index += 1
+        if edge_type == 1:
+            candidates, index = _parse_hatch_line_edge(tags, index)
+        elif edge_type == 2:
+            candidates, index = _parse_hatch_arc_edge(tags, index)
+        elif edge_type == 3:
+            candidates, index = _parse_hatch_ellipse_edge(tags, index)
+        else:
+            candidates = []
+        candidates_by_edge.append(candidates)
+
+    return _concatenate_hatch_edge_candidates(candidates_by_edge), index
+
+
+def parse_hatch_boundary_paths(tags: Sequence[Tuple[int, str]]) -> List[HatchBoundaryPath]:
+    boundary_count: Optional[int] = None
+    index = 0
+    for tag_index, (code, raw) in enumerate(tags):
+        if code == 91:
+            boundary_count = parse_int(raw)
+            index = tag_index + 1
+            break
+    if boundary_count is None:
+        return []
+
+    paths: List[HatchBoundaryPath] = []
+    while index < len(tags) and len(paths) < boundary_count:
+        code, raw = tags[index]
+        if code != 92:
+            index += 1
+            continue
+
+        flags = parse_int(raw)
+        index += 1
+        if flags & HATCH_PATH_POLYLINE:
+            points, index = _parse_hatch_polyline_path(tags, index)
+        else:
+            points, index = _parse_hatch_edge_path(tags, index)
+        if points:
+            paths.append(HatchBoundaryPath(flags=flags, points=points))
+
+    return paths
+
+
 def flatten_polyline_points(points: Sequence[Tuple[float, float, float]], closed: bool) -> List[Point]:
     flat = [(x, y) for x, y, _ in points]
     if closed and flat and distance(flat[0], flat[-1]) > 1e-6:
@@ -645,6 +981,14 @@ def entity_to_draw_paths(entity: Entity) -> List[List[Point]]:
         return [points] if points else []
     if entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.points:
         return [flatten_polyline_points(entity.points, entity.closed)]
+    if entity.type == "HATCH" and entity.hatch_paths:
+        if entity.family is None:
+            return [path.points for path in entity.hatch_paths if path.points]
+        return [
+            path.points
+            for path in entity.hatch_paths
+            if path.is_outer_candidate and family_accepts_polygon(entity.family, path.points)
+        ]
     return []
 
 
@@ -724,8 +1068,30 @@ def extract_direct_polygons(entities: Sequence[Entity]) -> List[PolygonRecord]:
     return polygons
 
 
+def extract_hatch_polygons(entities: Sequence[Entity]) -> List[PolygonRecord]:
+    polygons: List[PolygonRecord] = []
+    for entity in entities:
+        if entity.family is None or entity.type != "HATCH":
+            continue
+        for path in entity.hatch_paths:
+            if not path.is_outer_candidate:
+                continue
+            record = polygon_record(
+                family=entity.family,
+                ring=path.points,
+                source_layers=[entity.layer],
+                source_entity_ids=[entity.entity_id],
+                source_kind="direct_hatch",
+            )
+            if record is not None:
+                polygons.append(record)
+    return polygons
+
+
 def entity_to_segments(entity: Entity) -> List[Segment]:
     if entity.family is None:
+        return []
+    if entity.type == "HATCH":
         return []
     if entity.type in {"CIRCLE"}:
         return []
@@ -950,6 +1316,12 @@ def entity_length(entity: Entity) -> float:
     if entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.points:
         flat = flatten_polyline_points(entity.points, entity.closed)
         return sum(distance(flat[index], flat[index + 1]) for index in range(len(flat) - 1))
+    if entity.type == "HATCH" and entity.hatch_paths:
+        return sum(
+            distance(path[index], path[index + 1])
+            for path in entity_to_draw_paths(entity)
+            for index in range(len(path) - 1)
+        )
     return 0.0
 
 
@@ -1203,6 +1575,18 @@ def family_polygon_counts(polygons: Sequence[PolygonRecord]) -> Dict[str, int]:
     return {family: counts.get(family, 0) for family in ["walls", "columns", "curtain_walls"]}
 
 
+def hatch_extraction_stats(entities: Sequence[Entity], polygons: Sequence[PolygonRecord]) -> Dict[str, int]:
+    hatch_entities = [entity for entity in entities if entity.family and entity.type == "HATCH"]
+    hatch_paths = [path for entity in hatch_entities for path in entity.hatch_paths]
+    return {
+        "entities": len(hatch_entities),
+        "parsed_paths": len(hatch_paths),
+        "outer_candidate_paths": sum(1 for path in hatch_paths if path.is_outer_candidate),
+        "skipped_hole_or_default_paths": sum(1 for path in hatch_paths if not path.is_outer_candidate),
+        "direct_hatch_polygons": sum(1 for polygon in polygons if polygon.source_kind == "direct_hatch"),
+    }
+
+
 def build_analysis_summary(
     entities: Sequence[Entity],
     polygons: Sequence[PolygonRecord],
@@ -1234,6 +1618,8 @@ def build_analysis_summary(
             "direct": sum(1 for polygon in polygons if polygon.source_kind.startswith("direct")),
             "graph_face": sum(1 for polygon in polygons if polygon.source_kind == "graph_face"),
         },
+        "source_kind_counts": dict(Counter(polygon.source_kind for polygon in polygons).most_common()),
+        "hatch_extraction": hatch_extraction_stats(entities, polygons),
         "target_primitive_totals": {
             "count": len(target_entities),
             "length_total": round(total_target_length, 3),
@@ -1284,6 +1670,7 @@ def write_analysis_report(path: Path, summary: Dict[str, object]) -> None:
     polygon_counts = summary["polygon_counts"]
     target_totals = summary["target_primitive_totals"]
     wall_snap_stats = summary["wall_snap_stats"]
+    hatch_stats = summary["hatch_extraction"]
     lines = [
         "# DXF Analysis Report",
         "",
@@ -1299,6 +1686,7 @@ def write_analysis_report(path: Path, summary: Dict[str, object]) -> None:
         f"- Walls extracted: `{polygon_counts['walls']}`",
         f"- Columns extracted: `{polygon_counts['columns']}`",
         f"- Curtain walls extracted: `{polygon_counts['curtain_walls']}`",
+        f"- Direct HATCH polygons extracted: `{hatch_stats['direct_hatch_polygons']}` from `{hatch_stats['outer_candidate_paths']}` outer/external HATCH paths; `{hatch_stats['skipped_hole_or_default_paths']}` non-outer paths skipped as hole/default candidates.",
         "",
         "## Connectivity Callouts",
         "",
@@ -1313,7 +1701,7 @@ def write_analysis_report(path: Path, summary: Dict[str, object]) -> None:
             "## Interpretation",
             "",
             "- The data behaves like a tokenization problem: direct closed carriers give obvious tokens, while wall linework requires graph-based closure recovery.",
-            "- Columns are the cleanest family because circles and compact closed polylines are abundant on column layers.",
+            "- Columns combine strong direct carriers (circles, compact polylines) with companion-layer HATCH boundaries where those paths qualify as outer loops.",
             "- Walls remain the hardest family because they are dominated by open linework, mixed drafting conventions, and high-degree junctions after snapping.",
             "- Curtain wall layers are structurally regular and would benefit from a second-pass grid detector if coverage mattered more than turnaround time.",
             "",
@@ -1416,9 +1804,10 @@ def main() -> None:
     report_tolerance = snap_tolerance_for_report(snap_tolerance)
 
     direct_polygons = extract_direct_polygons(entities)
+    hatch_polygons = extract_hatch_polygons(entities)
     graph_segments = [segment for entity in entities for segment in entity_to_segments(entity)]
     graph_polygons = extract_faces_from_segments(graph_segments, tolerance=snap_tolerance)
-    polygons = dedupe_polygons(direct_polygons + graph_polygons)
+    polygons = dedupe_polygons(direct_polygons + hatch_polygons + graph_polygons)
     runtime_seconds = time.time() - start_time
 
     summary = build_analysis_summary(

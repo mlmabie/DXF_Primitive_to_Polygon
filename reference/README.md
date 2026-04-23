@@ -11,6 +11,9 @@ exist so the tradeoffs in `augrade/` are auditable.
   empirical analysis of layer-schema variants on the supplied file and
   why `FAMILY_LAYER_MAP` pools certain hyphen/space pairs. Load-bearing
   for the extraction defaults.
+- [`process/hatch_boundary_inspection.md`](process/hatch_boundary_inspection.md) —
+  raw HATCH boundary-path inspection that justified stdlib parsing for
+  polyline, line-edge, circular-arc, and elliptic-arc loops.
 - [`research/programmatic_vs_contextual_merges.md`](research/programmatic_vs_contextual_merges.md) —
   the two-quotient decomposition of merge decisions, with per-family
   evidence counts.

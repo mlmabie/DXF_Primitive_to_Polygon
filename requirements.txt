@@ -9,3 +9,8 @@
 # you need the two DXF-writing modules:
 #
 #   uv pip install ezdxf
+
+# Optional: Playwright is only needed for dashboard screenshot QA:
+#
+#   python3 -m pip install playwright
+#   python3 -m playwright install chromium

@@ -34,7 +34,11 @@ The naive response is `name.replace('-', ' ')` and move on. That's wrong. Layer 
 
 ### HATCH Companion Layers
 
-Four wall layers have HATCH companion layers that are **not in the target scope** but contain the same physical elements drawn as filled regions:
+Four wall layers have HATCH companion layers that contain the same
+physical elements drawn as filled regions. The initial scaffold treated
+them as outside the direct target set; the current solver now enumerates
+these layers explicitly in `FAMILY_LAYER_MAP["walls"]` and preserves the
+companion layer names in `source_layers`.
 
 | Target Layer | Companion Layer | Count | Entity Types |
 |-------------|-----------------|-------|-------------|

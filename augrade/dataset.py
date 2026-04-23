@@ -154,6 +154,8 @@ def merge_lab_payload(dataset: AnalysisDataset) -> Dict[str, object]:
                 }
                 for family in FAMILIES
             },
+            "hatch_extraction": dataset.summary.get("hatch_extraction"),
+            "source_kind_counts": dataset.summary.get("source_kind_counts"),
         },
         "families": dataset.family_payloads,
     }

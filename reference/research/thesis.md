@@ -182,7 +182,7 @@ The GNN is not the first step. It is what comes after the quotient is reasonably
 
 ## What The Take-Home Proved Empirically
 
-- A geometry-first pipeline can recover `274 / 572 / 304` walls / columns / curtain walls on the supplied file in a few seconds.
+- A geometry-first pipeline can recover `1158 / 764 / 304` walls / columns / curtain walls on the supplied file in a few seconds after adding explicit HATCH boundary extraction; the earlier graph/direct-only baseline was `274 / 572 / 304`.
 - The hyphen/space layer variants can collapse programmatically in the right cases.
 - Column merge candidates separate into interpretable buckets:
   - extraction duplicates

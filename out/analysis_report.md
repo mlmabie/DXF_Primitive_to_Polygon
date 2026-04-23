@@ -2,28 +2,29 @@
 
 ## Raw File Organization
 
-- Runtime for parse + extraction: `2.61s`
+- Runtime for parse + extraction: `2.56s`
 - Primitive types are dominated by `LINE` with `58128` entities, followed by `LWPOLYLINE`, `ELLIPSE`, `HATCH`, and `ARC`.
-- Scoped target primitives total `34834` entities with an estimated drawable length of `1144751.426` units.
-- Estimated consumed target length is `228196.808` units, or `19.9%` of scoped drawable length.
+- Scoped target primitives total `36827` entities with an estimated drawable length of `1967355.755` units.
+- Estimated consumed target length is `1010862.297` units, or `51.4%` of scoped drawable length.
 
 ## Target Family Counts
 
-- Walls extracted: `274`
-- Columns extracted: `572`
+- Walls extracted: `1158`
+- Columns extracted: `764`
 - Curtain walls extracted: `304`
+- Direct HATCH polygons extracted: `1453` from `2222` outer/external HATCH paths; `56` non-outer paths skipped as hole/default candidates.
 
 ## Connectivity Callouts
 
-- Snap `0.1`: `20357` nodes, `7425` leaves, `9780` degree-2 nodes, `1196` degree-3 nodes, `1956` degree-4+ junctions.
-- Snap `0.25`: `17143` nodes, `6707` leaves, `7471` degree-2 nodes, `833` degree-3 nodes, `2132` degree-4+ junctions.
-- Snap `0.5`: `15039` nodes, `5427` leaves, `7338` degree-2 nodes, `662` degree-3 nodes, `1612` degree-4+ junctions.
-- Snap `1.0`: `13201` nodes, `4302` leaves, `6838` degree-2 nodes, `708` degree-3 nodes, `1353` degree-4+ junctions.
+- Snap `0.1`: `20398` nodes, `7419` leaves, `9808` degree-2 nodes, `1208` degree-3 nodes, `1963` degree-4+ junctions.
+- Snap `0.25`: `17181` nodes, `6696` leaves, `7499` degree-2 nodes, `848` degree-3 nodes, `2138` degree-4+ junctions.
+- Snap `0.5`: `15077` nodes, `5417` leaves, `7365` degree-2 nodes, `676` degree-3 nodes, `1619` degree-4+ junctions.
+- Snap `1.0`: `13237` nodes, `4289` leaves, `6865` degree-2 nodes, `723` degree-3 nodes, `1360` degree-4+ junctions.
 
 ## Interpretation
 
 - The data behaves like a tokenization problem: direct closed carriers give obvious tokens, while wall linework requires graph-based closure recovery.
-- Columns are the cleanest family because circles and compact closed polylines are abundant on column layers.
+- Columns combine strong direct carriers (circles, compact polylines) with companion-layer HATCH boundaries where those paths qualify as outer loops.
 - Walls remain the hardest family because they are dominated by open linework, mixed drafting conventions, and high-degree junctions after snapping.
 - Curtain wall layers are structurally regular and would benefit from a second-pass grid detector if coverage mattered more than turnaround time.
 

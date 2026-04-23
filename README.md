@@ -3,6 +3,14 @@
 Airport mezzanine take-home: ~67,000 DXF primitives across ~111 layers,
 no grouping metadata, recover closed polygons grouped by element type.
 
+This matches the take-home brief: scoped wall, column, and curtain-wall
+layers; JSON with `walls`, `columns`, `curtain_walls`, and `metrics`;
+clockwise closed rings; SVG overlays for review; warnings when scoped
+layers are missing. `HATCH` is a first-class primitive in DXF; companion
+`* HATCH` layers (fill vs outline on separate layers, as in the brief)
+are included in scope and contribute `direct_hatch` polygons where outer
+boundary paths parse.
+
 The approach is a geometry-first tokenizer:
 
 - parse the DXF into primitive carriers
@@ -26,8 +34,15 @@ The result on the supplied file:
 
 | mode | walls | columns | curtain walls | coverage |
 | --- | --- | --- | --- | --- |
-| conservative (default) | 274 | 572 | 304 | 19.9% |
-| liberal | 288 | 568 | 309 | 20.8% |
+| conservative (default) | 1158 | 764 | 304 | 51.4% |
+| liberal | 1173 | 781 | 309 | 51.9% |
+
+The previous graph/direct-only baseline was `274 / 572 / 304` at
+`19.9%` coverage. Companion HATCH layers now contribute `1453`
+`direct_hatch` polygons in conservative mode: `954` walls and `499`
+columns from the explicit wall and column companion layers. The
+coverage proxy counts drawable HATCH boundary paths, not rejected
+aggregate/texture paths inside multi-path HATCH entities.
 
 Outputs written to `out/`:
 
@@ -86,12 +101,14 @@ tolerance applied uniformly.
 
 ```bash
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode conservative
-python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out --mode liberal
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" out_liberal --mode liberal
 ```
 
-`0.75` is chosen because `1.0`, `1.5`, and `2.0` distort family counts
-more aggressively (especially columns and curtain walls) for only a
-marginal coverage gain.
+After HATCH extraction, snap tolerance mainly affects graph-face
+recovery around the direct carriers. `0.5` is the default because it
+matches the wall-connectivity elbow and the reviewed overlay. More
+aggressive tolerances can add or reshuffle graph faces, but the coverage
+gain is marginal compared with the higher merge risk.
 
 ### Advanced override: `--snap-tolerance`
 
@@ -120,6 +137,8 @@ agent-review script all consume one `AnalysisDataset`:
 ```bash
 # full HITL bundle (regenerates dashboard + merge lab; none tracked)
 python3 -m augrade.cli.pipeline "Airport Doors_MEZZ.dxf" out_bundle --mode conservative
+python3 scripts/verify_dashboards.py --bundle out_bundle
+python3 scripts/verify_regions.py --bundle out_bundle
 
 # interactive workbench
 python3 -m augrade.repl --input "Airport Doors_MEZZ.dxf" --output out_bundle
@@ -136,7 +155,8 @@ can be read without paging through ~2500 lines of HTML generator. The
 generated HTML/JSON dumps (`dashboard.html`, `merge_lab.html`,
 `merge_lab_data.json`, `dashboard_assets/`, `provenance_index.json`,
 `pipeline_manifest.json`) are gitignored — regenerate via the
-pipeline command above.
+pipeline command above. The screenshot verification scripts are optional
+QA helpers and require Playwright.
 
 ## What the analysis found
 
@@ -175,7 +195,7 @@ sim-to-real gap. Full framing in
 
 Not yet handled:
 
-- `HATCH` boundary extraction as first-class polygons
+- arbitrary `HATCH` on non-scoped layers (only scoped family layers are read)
 - `INSERT` explosion
 - `SPLINE`
 - exact bulge for all polyline curvature

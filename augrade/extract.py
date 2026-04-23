@@ -36,13 +36,14 @@ def run_extraction(input_path: Path, snap_tolerance: SnapTolerance) -> Extractio
     start = time.time()
     entities = list(td.iter_entities(input_path))
     direct_polygons = td.extract_direct_polygons(entities)
+    hatch_polygons = td.extract_hatch_polygons(entities)
     graph_segments = [
         segment for entity in entities for segment in td.entity_to_segments(entity)
     ]
     graph_polygons = td.extract_faces_from_segments(
         graph_segments, tolerance=snap_tolerance
     )
-    polygons = td.dedupe_polygons(direct_polygons + graph_polygons)
+    polygons = td.dedupe_polygons(direct_polygons + hatch_polygons + graph_polygons)
     return ExtractionResult(
         input_path=input_path,
         snap_tolerance=snap_tolerance,

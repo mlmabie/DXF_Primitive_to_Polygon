@@ -318,7 +318,7 @@ def collect_representative_assets(
             write_zoom_svg(svg_path, extent, nearby_entities, nearby_polygons, polygon)
 
             snippet_entities = []
-            priority = {"CIRCLE": 0, "ARC": 1, "LINE": 2, "LWPOLYLINE": 3, "POLYLINE": 4, "ELLIPSE": 5}
+            priority = {"CIRCLE": 0, "HATCH": 1, "ARC": 2, "LINE": 3, "LWPOLYLINE": 4, "POLYLINE": 5, "ELLIPSE": 6}
             for entity_id in sorted(polygon.source_entity_ids, key=lambda item: priority.get(entity_by_id[item].type, 99) if item in entity_by_id else 99):
                 if entity_id in entity_by_id:
                     snippet_entities.append(entity_by_id[entity_id])
@@ -416,6 +416,12 @@ def build_dashboard_html(
     target_totals = summary["target_primitive_totals"]
     polygon_counts = summary["polygon_counts"]
     graph_vs_direct = summary["graph_vs_direct_counts"]
+    hatch_stats = summary["hatch_extraction"]
+    source_kind_counts: Dict[str, int] = dict(summary.get("source_kind_counts") or {})
+    hatch_polygon_n = int(hatch_stats.get("direct_hatch_polygons", 0))
+    direct_total = int(graph_vs_direct["direct"])
+    direct_non_hatch = max(0, direct_total - hatch_polygon_n)
+    graph_face_n = int(graph_vs_direct["graph_face"])
     wall_snap_stats = summary["wall_snap_stats"]
     family_provenance = provenance["family_summaries"]
     layer_summaries = provenance["layer_summaries"]
@@ -440,7 +446,12 @@ def build_dashboard_html(
             metric_card("Runtime", f"{summary['runtime_seconds']:.2f}s", "parse + extraction + stats", "#111111"),
             metric_card("Scoped Primitives", fmt_int(target_totals["count"]), "target-layer entities", "#444444"),
             metric_card("Consumed Length", fmt_pct(target_totals["length_coverage_estimate"]), f"{fmt_float(target_totals['length_consumed'], 0)} / {fmt_float(target_totals['length_total'], 0)} units", "#0b7285"),
-            metric_card("Direct vs Graph", f"{fmt_int(graph_vs_direct['direct'])} / {fmt_int(graph_vs_direct['graph_face'])}", "direct closures / graph faces", "#6c5ce7"),
+            metric_card(
+                "Direct / HATCH / Graph",
+                f"{fmt_int(direct_non_hatch)} / {fmt_int(hatch_polygon_n)} / {fmt_int(graph_face_n)}",
+                "non-HATCH direct / HATCH boundaries / graph faces",
+                "#6c5ce7",
+            ),
         ]
     )
 
@@ -464,6 +475,31 @@ def build_dashboard_html(
         [tol, fmt_int(stats["nodes"]), fmt_int(stats["degree_1"]), fmt_int(stats["degree_2"]), fmt_int(stats["degree_3"]), fmt_int(stats["degree_4_plus"])]
         for tol, stats in wall_snap_stats.items()
     ]
+
+    hatch_panel_rows = [
+        ["Scoped HATCH entities", fmt_int(int(hatch_stats.get("entities", 0)))],
+        ["Parsed boundary paths", fmt_int(int(hatch_stats.get("parsed_paths", 0)))],
+        ["Outer / external candidate paths", fmt_int(int(hatch_stats.get("outer_candidate_paths", 0)))],
+        ["Skipped (hole / default) paths", fmt_int(int(hatch_stats.get("skipped_hole_or_default_paths", 0)))],
+        ["Polygons from HATCH (`direct_hatch`)", fmt_int(hatch_polygon_n)],
+    ]
+    source_kind_rows = [
+        [html.escape(kind), fmt_int(int(count))]
+        for kind, count in sorted(source_kind_counts.items(), key=lambda item: (-item[1], item[0]))
+    ]
+    source_kind_table_html = (
+        table_html(["Source kind", "Polygons"], source_kind_rows)
+        if source_kind_rows
+        else "<p class=\"note\">No polygons in this run.</p>"
+    )
+    hatch_context_note = ""
+    if int(hatch_stats.get("entities", 0)) > 0:
+        hatch_context_note = (
+            f"<p class=\"note\">Companion-layer <code>HATCH</code> entities on scoped families: "
+            f"{fmt_int(int(hatch_stats['entities']))} on file; "
+            f"{fmt_int(hatch_polygon_n)} recovered as <code>direct_hatch</code> polygons "
+            f"(outer/external boundary paths only).</p>"
+        )
 
     chart_entity_types = bar_chart_svg([(label, count) for label, count in entity_type_counts], "#384bff")
     chart_top_layers = bar_chart_svg([(label, count) for label, count in top_layers], "#117a65", width=620, height=320)
@@ -812,7 +848,7 @@ def build_dashboard_html(
       <div class="hero-card">
         <h1>Airport DXF Analysis Dashboard</h1>
         <p>This dashboard turns the mezzanine DXF into something you can read like a data system instead of a flat CAD dump: raw primitive mix, closure-driven tokenization, family geometry distributions, representative zoom panels, and snippets of DXF code from the recovered features.</p>
-        <p>The key pattern is visible in the stats and the images: columns are mostly direct closed carriers, curtain walls are regular local panels, and walls are the hard case because they need graph closure across fragmented linework.</p>
+        <p>The key pattern is visible in the stats and the images: columns combine direct circles and polylines with companion-layer <code>HATCH</code> fills on column hatch layers, curtain walls stay structurally regular as local panels, walls mix graph-closed linework with wall companion hatch boundaries, and long wall runs stay the hard case when lines alone need the snapped graph.</p>
       </div>
       <div class="hero-card">
         <img src="extracted_overlay.svg" alt="Overlay preview">
@@ -839,7 +875,8 @@ def build_dashboard_html(
       <div class="panel">
         <h3>Entity Type Counts</h3>
         {chart_entity_types}
-        <div class="note">The file is overwhelmingly line-driven. That matters because line-heavy wall layers force composition through endpoint closure instead of direct extraction.</div>
+        <div class="note">Primitive mix below drives the story: line-heavy wall layers still force graph closure, while a visible <code>HATCH</code> bar usually means hatch companions are feeding direct polygons alongside linework.</div>
+        {hatch_context_note}
       </div>
       <div class="panel">
         <h3>Top Layers</h3>
@@ -869,6 +906,20 @@ def build_dashboard_html(
         <h3>Wall Snap Connectivity</h3>
         {table_html(["Tolerance", "Nodes", "Degree-1", "Degree-2", "Degree-3", "Degree-4+"], snap_rows)}
         <p class="note">The degree-4+ junction load is the tell. Once snapping is applied, walls become a high-branching graph rather than a simple rectangle list.</p>
+      </div>
+    </section>
+
+    <h2 class="section-title">HATCH And Provenance Mix</h2>
+    <section class="two-col">
+      <div class="panel">
+        <h3>HATCH Boundary Extraction</h3>
+        {table_html(["Metric", "Count"], hatch_panel_rows)}
+        <p class="note">Only paths flagged outer/external in the DXF boundary list become polygons; inner loops stay out of the token set on purpose.</p>
+      </div>
+      <div class="panel">
+        <h3>Polygon Source Kind</h3>
+        {source_kind_table_html}
+        <p class="note"><code>direct_hatch</code> rows are the hatch-derived slice of the direct bucket in the run metrics above.</p>
       </div>
     </section>
 
