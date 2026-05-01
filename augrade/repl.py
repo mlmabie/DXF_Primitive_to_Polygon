@@ -2,7 +2,7 @@
 
 Every command is a thin wrapper over the augrade library. No new logic lives
 here; the REPL exists to make the library self-describing and to unify the
-DXF-native review and provenance-first HITL paths behind one session state.
+DXF-native review and provenance-first review paths behind one session state.
 """
 
 from __future__ import annotations

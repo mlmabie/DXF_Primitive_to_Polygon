@@ -83,7 +83,7 @@ def write_merge_lab_bundle(input_dxf: Path, output_dir: Path, snap_tolerance: fl
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build the full HITL analysis bundle: extraction, provenance, dashboard, and merge lab.")
+    parser = argparse.ArgumentParser(description="Build the full review analysis bundle: extraction, provenance, dashboard, and merge lab.")
     parser.add_argument("input_dxf", type=Path, help="Source DXF file.")
     parser.add_argument("output_dir", type=Path, help="Directory for all generated artifacts.")
     parser.add_argument(
@@ -150,7 +150,7 @@ def main() -> None:
     }
     (args.output_dir / "pipeline_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
-    print("HITL pipeline complete.")
+    print("Review pipeline complete.")
     print(f"  Output directory: {args.output_dir}")
     print(f"  Polygon counts: {manifest['polygon_counts']}")
     print(f"  Dashboard: {args.output_dir / 'dashboard.html'}")
