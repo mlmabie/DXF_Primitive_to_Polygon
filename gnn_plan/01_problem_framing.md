@@ -26,6 +26,18 @@ The model can classify at several granularities:
 | relation | same element, adjacent, crosses, blocks, depends-on | merge and cascade target |
 | component | wall assembly, room shell, plumbing route | downstream predictive target |
 
+## Product Framing
+
+Treat the downstream Augrade context as preconstruction and project-delivery
+automation: drawings and requirements become editable BIM/CAD outputs,
+take-offs, schedules, construction documents, and related downstream artifacts.
+Older AR/VR-oriented public material is legacy context, not the default model
+target.
+
+That framing makes the graph task broader than symbol recognition. The useful
+world interface needs to support object formation, relation propagation,
+validator feedback, and revision workflows.
+
 ## Constraints
 
 - No layer priors in the first experimental target.
@@ -80,4 +92,4 @@ examples:
 - Which classes require neighborhood context beyond local geometry?
 - Does a non-graph baseline already solve most of the task?
 - Where does message passing add value over hand-built geometry features?
-
+- Which labels or edits would become useful workflow exhaust later?

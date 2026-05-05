@@ -32,6 +32,8 @@ Each example should answer:
   labels?
 - Are there before/after or edit-cascade annotations?
 - Which labels are certain and which are speculative?
+- Are there comments, rejections, validator failures, or other workflow traces
+  that should be preserved?
 
 ## Suggested Annotation Schema
 
@@ -81,6 +83,16 @@ Each example should answer:
       "conflicts": [],
       "notes": ""
     }
+  ],
+  "workflow_traces": [
+    {
+      "trace_id": "W001",
+      "kind": "validator_failure",
+      "linked_label_ids": ["L001"],
+      "linked_event_ids": ["E001"],
+      "text": "",
+      "outcome": "unresolved"
+    }
   ]
 }
 ```
@@ -99,6 +111,7 @@ For each example:
    - component id
    - relation between ids
    - edit event
+   - workflow trace
 6. Record ambiguity instead of forcing a label.
 
 ## Label Policy
@@ -121,4 +134,3 @@ Use clear labels first:
 
 Then add project-specific classes after the first examples reveal what matters.
 Avoid overfitting the taxonomy before seeing the annotation style.
-

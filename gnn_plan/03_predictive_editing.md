@@ -88,6 +88,37 @@ Learned predictions should explain why the model thinks an impact cascades:
 - repeated pattern break
 - changed face topology
 
+## Residual Edit Bias
+
+Real project work is usually repair and revision rather than whole-scene
+generation. The predictive layer should therefore center residual edits:
+
+- preserve unaffected structure
+- propose minimal valid changes
+- expose validator residuals before and after the edit
+- keep evidence links to the raw geometry or annotation that motivated the edit
+- rank alternatives rather than forcing one answer when intent is uncertain
+
+This turns edit prediction into a structured control problem over graph state,
+not a free-form generation problem.
+
+## Workflow Exhaust
+
+The best future supervision is likely workflow exhaust:
+
+- accepted edits
+- rejected edits
+- repairs
+- validator failures
+- substitutions
+- comments and rationales
+- revision history
+- designer disagreement
+- time-to-fix
+
+Static labels teach recognition. Workflow traces teach what a meaningful repair
+looks like and which ambiguities are operationally expensive.
+
 ## Annotation Needs
 
 For predictive editing, static labels are not enough. We need at least one of:
@@ -99,4 +130,3 @@ For predictive editing, static labels are not enough. We need at least one of:
 
 Without before/after data, the first pass should be a rule-backed what-if graph
 simulator plus a place to record predicted cascades for review.
-

@@ -168,3 +168,22 @@ PNA, or a lightweight heterogeneous GNN. The task is not to discover CAD
 geometry from scratch; it is to propagate local evidence across a structured
 candidate graph.
 
+## First-Class State
+
+As the graph matures, make these primitives explicit rather than burying them
+inside a single scene embedding:
+
+- object tokens: persistent id, canonical geometry, local frame, type/material
+  when known, uncertainty, and evidence links
+- relation tokens: support, adjacency, containment, alignment, clearance,
+  connectivity, circulation, routing, and code-relevant separation
+- hierarchy tokens: primitive -> supervector -> component -> assembly -> room
+  -> zone -> floor -> building
+- constraint tokens: hard-validity flag, residual to threshold, validator
+  provenance, and implicated ids
+- residual edit tokens: move, resize, attach, split, merge, reroute, delete,
+  repair, and reassign
+
+The point is future-proofing: if encoders, graph backbones, or planners improve,
+the product should keep the same world interface while swapping the learned
+parts underneath it.

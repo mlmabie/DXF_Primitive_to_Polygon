@@ -16,3 +16,9 @@ Current notes:
 - [`augrade_representation_reading_notes.md`](augrade_representation_reading_notes.md)
   maps the cited representation-learning, co-design, calibration, and memory
   papers onto the GNN plan.
+- [`augrade_model_prep_import.md`](augrade_model_prep_import.md)
+  records the older `~/agent-workspace/augrade-model-prep` source workspace
+  and what was consolidated.
+- [`augrade_strategy_from_model_prep.md`](augrade_strategy_from_model_prep.md)
+  distills the old prep notes into first-class primitives, workflow exhaust,
+  residual edits, graph-program hybrid structure, and future-proofing guidance.

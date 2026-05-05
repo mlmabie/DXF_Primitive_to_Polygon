@@ -55,6 +55,19 @@ Candidate models:
 - PNA
 - heterogeneous message passing over primitive/supervector/face nodes
 
+## Future-Facing Evaluation
+
+Once the first annotation path works, add tests that match the product loop:
+
+- symmetry shift: drafting style, rotation, scale, partial observation, and
+  modality changes
+- composition shift: larger assemblies, new room/floor compositions, deeper
+  hierarchy, and unusual valid constraint combinations
+- residual repair: start from broken graph states and measure minimal valid
+  edits, structure preservation, and validator-residual reduction
+- workflow realism: use revision traces to predict or rank the next competent
+  correction
+
 ## Phase 4: Raster Context Ablation
 
 Goal:
@@ -70,4 +83,3 @@ Goal:
 - predict impacted nodes, conflicts, and dependencies
 - combine deterministic geometry updates, explicit constraints, and learned
   impact scoring
-

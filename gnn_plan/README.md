@@ -38,8 +38,9 @@ be split into a standalone repo later.
 3. [`03_predictive_editing.md`](03_predictive_editing.md)
 4. [`04_research_map.md`](04_research_map.md)
 5. [`notes/augrade_representation_reading_notes.md`](notes/augrade_representation_reading_notes.md)
-6. [`05_annotation_intake.md`](05_annotation_intake.md)
-7. [`experiments/README.md`](experiments/README.md)
+6. [`notes/augrade_strategy_from_model_prep.md`](notes/augrade_strategy_from_model_prep.md)
+7. [`05_annotation_intake.md`](05_annotation_intake.md)
+8. [`experiments/README.md`](experiments/README.md)
 
 ## Link To Existing Work
 
@@ -55,6 +56,13 @@ This plan builds on the current deterministic scaffold:
 - [`notes/augrade_representation_reading_notes.md`](notes/augrade_representation_reading_notes.md)
   folds the cited representation, co-design, calibration, and memory papers
   into this plan.
+- [`notes/augrade_model_prep_import.md`](notes/augrade_model_prep_import.md)
+  records the older model-prep workspace that was consolidated into this
+  branch.
+- [`notes/augrade_strategy_from_model_prep.md`](notes/augrade_strategy_from_model_prep.md)
+  distills the pre-take-home strategy notes into first-class primitives,
+  workflow exhaust, residual edits, future-proofing, and compute-aware
+  implementation guidance.
 
 The new layer-blind assumption is stricter than the current solver. Existing
 layer priors should be treated as optional evaluation metadata, not as model
