@@ -196,10 +196,32 @@ The old prep notes repeatedly emphasized lightweight, efficient, scalable
 systems matched to actual compute and data realities. Preserve that bias:
 
 - start with sparse and inspectable baselines
+- include convolutional filtering/raster chips as a baseline or local context
+  path when visual texture helps
 - profile graph construction and feature generation, not only the forward pass
 - prefer hybrid systems where model complexity earns its keep
 - ask whether static or dynamic graph construction is the actual bottleneck
 - choose PyG/custom paths based on scale and stability, not framework fashion
+
+Cluster questions should shape the algorithm:
+
+- static vs dynamic graph construction
+- sparse message passing vs dense/flattened tensor kernels
+- CPU interactive inference vs GPU batch review
+- graph export cost vs model forward-pass cost
+- whether the deployment target rewards PyG flexibility or custom batching
+
+## Q&A Alpha References
+
+The late-March chat also pointed at three ideas that are useful but should stay
+properly scoped:
+
+- Neural Relational Inference: good analogy for latent dependency discovery,
+  not a direct plug-in architecture.
+- Temporal Straightening: later-stage representation objective for edit
+  trajectories and latent planning.
+- Entropy-Preserving RL: later-stage policy-training caution so graph-edit
+  policies keep diverse valid repair options.
 
 ## Strongest Short Form
 

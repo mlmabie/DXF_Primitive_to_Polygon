@@ -22,3 +22,6 @@ Current notes:
 - [`augrade_strategy_from_model_prep.md`](augrade_strategy_from_model_prep.md)
   distills the old prep notes into first-class primitives, workflow exhaust,
   residual edits, graph-program hybrid structure, and future-proofing guidance.
+- [`augrade_qa_alpha_refinement.md`](augrade_qa_alpha_refinement.md)
+  captures the late-March Q&A/chat alpha: convolutional filtering, NRI,
+  Temporal Straightening, Entropy-Preserving RL, and compute/cluster choices.

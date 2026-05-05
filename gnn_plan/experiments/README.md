@@ -37,6 +37,7 @@ Goal:
 Baselines:
 
 - rules over geometry features
+- convolutional filtering or raster-chip classifier for local visual context
 - sparse logistic regression
 - shallow tree or boosted tree
 - nearest prototype over normalized feature blocks
@@ -54,6 +55,13 @@ Candidate models:
 - GAT/GATv2
 - PNA
 - heterogeneous message passing over primitive/supervector/face nodes
+
+Relation-discovery probes:
+
+- NRI-style latent relation head over candidate dependencies
+- supervised edge classifier where relation labels exist
+- comparison between static per-drawing graphs and dynamic graph updates after
+  edits
 
 ## Future-Facing Evaluation
 
@@ -83,3 +91,10 @@ Goal:
 - predict impacted nodes, conflicts, and dependencies
 - combine deterministic geometry updates, explicit constraints, and learned
   impact scoring
+
+Optional later probes:
+
+- temporal-straightening loss over synthetic or real edit trajectories
+- entropy monitoring for any sequential edit policy
+- hardware-aware comparison of PyG message passing vs flattened/custom batched
+  tensor paths

@@ -135,6 +135,34 @@ Why it matters:
 
 Source: https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216
 
+### Neural Relational Inference
+
+Kipf, Fetaya, Wang, Welling, and Zemel, ICML 2018.
+
+Why it matters:
+
+- learns latent interaction graphs while modeling system dynamics
+- useful analogy for discovering hidden dependency/interaction relations from
+  edits, validation outcomes, and revision traces
+- relevant to relation types such as same-element, depends-on, blocks,
+  routes-through, must-move-with, and violates-with
+
+Source: https://proceedings.mlr.press/v80/kipf18a.html
+
+### Temporal Straightening For Latent Planning
+
+Wang, Bounou, Zhou, Balestriero, Rudner, LeCun, and Ren, 2026.
+
+Why it matters:
+
+- optimizes representations so latent trajectories are better conditioned for
+  planning
+- supports the idea that edit/revision embeddings should make repair distance
+  and validator-residual progress geometrically meaningful
+- later-stage objective for residual edit trajectories, not an MVP requirement
+
+Source: https://arxiv.org/abs/2603.12231
+
 ## Relevant To Representation Boundaries
 
 ### Geometric Deep Learning
@@ -273,16 +301,34 @@ Why it matters:
 
 Source: https://www.goodfire.ai/research/evee-explaining-genetic-variants
 
+### Entropy-Preserving Reinforcement Learning
+
+Petrenko, Lipkin, Chen, Wijmans, Cusumano-Towner, Giryes, and Krähenbühl,
+ICLR 2026.
+
+Why it matters:
+
+- policy-gradient training can reduce trajectory diversity unless entropy is
+  monitored and controlled
+- relevant to future graph-edit policies where multiple valid repairs should
+  remain discoverable
+- belongs after typed actions, validators, and sparse baselines are working
+
+Source: https://arxiv.org/abs/2603.11682
+
 ## Working Takeaways
 
 - Start with a vector-native graph, not a raster-first model.
 - Add supervector nodes so the GNN is not forced to learn every composition
   rule from primitives alone.
 - Include faces/regions explicitly once shell and route reasoning starts.
-- Keep raster chips as optional context and as a baseline comparison.
+- Keep convolutional/raster chips as optional context and as a baseline
+  comparison.
 - Use non-GNN baselines first. A graph model is useful only where relation
   propagation or component consistency beats local geometry features.
 - Keep deterministic validators outside the learned model.
 - Use calibrated uncertainty to decide auto-merge, reject, or review.
 - Test rewrite-invariance across authored CAD variations before trusting a
   learned relation scorer.
+- Treat future RL/search as an entropy-monitored sequential graph-edit loop,
+  not as the starting point.
