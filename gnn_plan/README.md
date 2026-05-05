@@ -33,6 +33,15 @@ be split into a standalone repo later.
 
 ## Reading Order
 
+For current sensemaking:
+
+1. [`sensemaking/README.md`](sensemaking/README.md)
+2. [`sensemaking/voice_and_vision_ledger.md`](sensemaking/voice_and_vision_ledger.md)
+3. [`sensemaking/q01_gnn_experience_and_vision.md`](sensemaking/q01_gnn_experience_and_vision.md)
+4. [`sensemaking/q02_frameworks_scale_and_systems.md`](sensemaking/q02_frameworks_scale_and_systems.md)
+
+For the derived technical plan:
+
 1. [`01_problem_framing.md`](01_problem_framing.md)
 2. [`02_graph_representations.md`](02_graph_representations.md)
 3. [`03_predictive_editing.md`](03_predictive_editing.md)
