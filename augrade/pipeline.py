@@ -13,8 +13,8 @@ from . import provenance as pu
 from .extract import run_extraction
 
 
-def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance) -> dict:
-    extraction = run_extraction(input_dxf, snap_tolerance)
+def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance, joint_tolerance: float = 0.0) -> dict:
+    extraction = run_extraction(input_dxf, snap_tolerance, joint_tolerance=joint_tolerance)
     entities = extraction.entities
     polygons = extraction.polygons
     graph_segments = extraction.graph_segments
@@ -25,6 +25,7 @@ def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance)
         polygons=polygons,
         runtime_seconds=extraction.runtime_seconds,
         snap_stats=td.compute_snap_stats(entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]),
+        coupling_stats=extraction.coupling_stats,
     )
     summary["snap_tolerance"] = (
         dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
@@ -101,6 +102,12 @@ def main() -> None:
             "('walls=0.5,columns=0.25,curtain_walls=0.35'), or 'adaptive'."
         ),
     )
+    parser.add_argument(
+        "--joint-tolerance",
+        type=float,
+        default=0.0,
+        help="Experimental endpoint-on-segment coupling tolerance. Default 0 disables coupling.",
+    )
     args = parser.parse_args()
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -117,7 +124,12 @@ def main() -> None:
     scalar_snap = td.snap_tolerance_for_report(snap_tolerance)
     suffix = format(scalar_snap, "g").replace(".", "_")
 
-    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, snap_tolerance)
+    token_summary = write_tokenization_bundle(
+        args.input_dxf,
+        args.output_dir,
+        snap_tolerance,
+        joint_tolerance=args.joint_tolerance,
+    )
     extraction = token_summary["extraction"]
     build_dashboard.build_dashboard(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
     write_merge_lab_bundle(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
@@ -128,6 +140,7 @@ def main() -> None:
         "snap_tolerance": (
             dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
         ),
+        "joint_tolerance": args.joint_tolerance,
         "scalar_snap_tolerance": scalar_snap,
         "polygon_counts": token_summary["polygon_counts"],
         "provenance_summary": token_summary["provenance"],
