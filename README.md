@@ -76,6 +76,9 @@ primary output.
 Read this if you want the bridge from this geometric scaffold to a
 learned review system.
 
+- [`gnn_plan/`](gnn_plan/) - next-phase setup for layer-blind DWG/DXF
+  graph classification, annotation intake, and predictive/editing
+  modeling
 - [`reference/research/thesis.md`](reference/research/thesis.md) — short, evidence-first thesis grounded in this file
 - [`reference/research/research_extension.md`](reference/research/research_extension.md) — broader GenAI research framing and staged extension plan
 - [`reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md`](reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md) — the merge-relation hypothesis sharpened
@@ -214,6 +217,8 @@ reference/
   process/layer_normalization_analysis.md
   experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md
   experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md
+
+gnn_plan/                             next-phase GNN and predictive-editing setup
 
 out/                                  default generated bundle (SVGs + JSON + report)
 ```
