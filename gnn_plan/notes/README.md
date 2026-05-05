@@ -11,3 +11,8 @@ Good candidates:
 - model comparison notes
 - references that still need triage
 
+Current notes:
+
+- [`augrade_representation_reading_notes.md`](augrade_representation_reading_notes.md)
+  maps the cited representation-learning, co-design, calibration, and memory
+  papers onto the GNN plan.

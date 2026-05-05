@@ -135,6 +135,144 @@ Why it matters:
 
 Source: https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216
 
+## Relevant To Representation Boundaries
+
+### Geometric Deep Learning
+
+Bronstein, Bruna, Cohen, and Velickovic, 2021.
+
+Why it matters:
+
+- gives the umbrella language for grids, groups, graphs, geodesics, gauges,
+  locality, hierarchy, and symmetry
+- supports graph/geometric priors for architectural data without requiring an
+  end-to-end learned geometry engine
+- helps explain why GNNs belong in the relational consistency layer above
+  object formation
+
+Source: https://arxiv.org/abs/2104.13478
+
+### A Mechanistic Analysis Of Sim-And-Real Co-Training
+
+Lei, Liu, Maddukuri, Jiang, and Zhu, 2026.
+
+Why it matters:
+
+- useful frame for cross-domain alignment while preserving domain identity
+- maps cleanly onto "pool for geometry, tag for provenance"
+- suggests testing rewrite-invariance rather than assuming authored CAD
+  variation is random noise
+
+Source: https://arxiv.org/abs/2604.13645
+
+### Geometric Algebra Transformer
+
+Brehmer, de Haan, Behrends, and Cohen, 2023.
+
+Why it matters:
+
+- representation choice is central: put geometric objects in a space where
+  geometric queries are natural
+- relevant to frames, directions, surfaces, clearances, and support relations
+- useful as design vocabulary even if CAD rewrite symmetries are not clean Lie
+  group actions
+
+Source: https://arxiv.org/abs/2305.18415
+
+### Choosing A Geometric Algebra For Equivariant Transformers
+
+de Haan, Cohen, and Brehmer, AISTATS 2024.
+
+Why it matters:
+
+- emphasizes that carrier choice changes expressivity, compute, and the
+  symmetry group the model respects
+- reinforces choosing primitive, supervector, relation, face, component,
+  constraint, and edit tokens around the task interface
+
+Source: https://proceedings.mlr.press/v238/haan24a.html
+
+### Any-Subgroup Equivariant Networks Via Symmetry Breaking
+
+Goel, Lim, Lawrence, Jegelka, and Huang, ICLR 2026.
+
+Why it matters:
+
+- useful vocabulary for family-conditioned invariance
+- supports testing shared model vs family-conditioned heads vs separate
+  family models
+- later-stage architecture idea, not the first baseline
+
+Source: https://openreview.net/forum?id=jz3d7nvtGz
+
+## Relevant To System Interfaces, Calibration, And Memory
+
+### Scalable Co-Design Via Linear Design Problems
+
+Cai, Huang, Alharbi, and Zardini, 2026.
+
+Why it matters:
+
+- compositional design problems need stable interfaces
+- closer to the practical Augrade claim than generic end-to-end generation
+- supports freezing object identity, edit grammar, validator boundary, evidence
+  links, and traces
+
+Source: https://arxiv.org/abs/2603.29083
+
+### A Mathematical Theory Of Co-Design
+
+Censi, 2015.
+
+Why it matters:
+
+- foundational background for compositional design interfaces
+- useful for thinking about feasibility, resources, and constraints across
+  coupled engineered subsystems
+- background citation; Cai et al. is the more tactical reference for this plan
+
+Source: https://arxiv.org/abs/1512.08055
+
+### Algorithmic Learning In A Random World
+
+Vovk, Gammerman, and Shafer, 2005 / 2022.
+
+Why it matters:
+
+- conformal prediction is a natural fit for auto-merge/reject/review bands
+- calibration and review-load reduction matter more than a single average F1
+- especially relevant for small labels and drafter-style shift
+
+Sources:
+
+- https://www.alrw.net/
+- https://link.springer.com/book/10.1007/978-3-031-06649-8
+
+### Dense Associative Memory With Exponential Capacity
+
+Shafiei Kafraj, Krotov, and Latham, 2026.
+
+Why it matters:
+
+- possible low-label prototype memory after relation features stabilize
+- useful for positive/negative merge exemplars and ambiguous boundary cases
+- should augment sparse pair scoring, not replace geometry or validators
+
+Source: https://arxiv.org/abs/2601.00984
+
+### Goodfire EVEE
+
+Goodfire, 2026.
+
+Why it matters:
+
+- industry example of turning rich embeddings into structured, interpretable
+  predictions
+- transferable lesson is the probe/readout layer, not the biology domain
+- cite as an industry research resource rather than a peer-reviewed BIM paper
+
+Source: https://www.goodfire.ai/research/evee-explaining-genetic-variants
+
 ## Working Takeaways
 
 - Start with a vector-native graph, not a raster-first model.
@@ -144,3 +282,7 @@ Source: https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216
 - Keep raster chips as optional context and as a baseline comparison.
 - Use non-GNN baselines first. A graph model is useful only where relation
   propagation or component consistency beats local geometry features.
+- Keep deterministic validators outside the learned model.
+- Use calibrated uncertainty to decide auto-merge, reject, or review.
+- Test rewrite-invariance across authored CAD variations before trusting a
+  learned relation scorer.

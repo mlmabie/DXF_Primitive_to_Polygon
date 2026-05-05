@@ -37,8 +37,9 @@ be split into a standalone repo later.
 2. [`02_graph_representations.md`](02_graph_representations.md)
 3. [`03_predictive_editing.md`](03_predictive_editing.md)
 4. [`04_research_map.md`](04_research_map.md)
-5. [`05_annotation_intake.md`](05_annotation_intake.md)
-6. [`experiments/README.md`](experiments/README.md)
+5. [`notes/augrade_representation_reading_notes.md`](notes/augrade_representation_reading_notes.md)
+6. [`05_annotation_intake.md`](05_annotation_intake.md)
+7. [`experiments/README.md`](experiments/README.md)
 
 ## Link To Existing Work
 
@@ -51,6 +52,9 @@ This plan builds on the current deterministic scaffold:
   motivates pair-relation learning.
 - [`../reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md`](../reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md)
   gives the previous staged experiment plan.
+- [`notes/augrade_representation_reading_notes.md`](notes/augrade_representation_reading_notes.md)
+  folds the cited representation, co-design, calibration, and memory papers
+  into this plan.
 
 The new layer-blind assumption is stricter than the current solver. Existing
 layer priors should be treated as optional evaluation metadata, not as model
@@ -64,4 +68,3 @@ The graph should keep exact coordinates, primitive type, curve parameters,
 connectivity, containment, overlap, and provenance. Raster views can be used as
 image chips for local context or for comparison against raster baselines, but
 the authoritative object should remain the vector graph.
-

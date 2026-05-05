@@ -15,5 +15,11 @@ out/pipeline_manifest.json
 out/dashboard_assets/
 out/verify/
 out/**/*.png
+out_bundle/
 out_liberal/
 out_samples/
+
+# Local research cache. Keep durable reading notes in markdown, but avoid
+# committing downloaded paper binaries or saved web pages.
+reference/papers/*.pdf
+reference/papers/*.html
