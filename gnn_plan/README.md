@@ -33,6 +33,10 @@ be split into a standalone repo later.
 
 ## Reading Order
 
+Start here:
+
+1. [`prompt.md`](prompt.md)
+
 For current sensemaking:
 
 1. [`sensemaking/README.md`](sensemaking/README.md)
