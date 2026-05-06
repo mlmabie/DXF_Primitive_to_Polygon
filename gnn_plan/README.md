@@ -33,7 +33,14 @@ be split into a standalone repo later.
 
 ## Reading Order
 
-Start here:
+If you only have ten minutes:
+
+1. [`TALK_TRACK.md`](TALK_TRACK.md) — single-page talk track for the
+   follow-up conversation, with per-claim citation anchors.
+2. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
+   data contracts, eval bar, and the first slice (Phases 0–2).
+
+For the original objective:
 
 1. [`prompt.md`](prompt.md)
 
@@ -43,6 +50,7 @@ For current sensemaking:
 2. [`sensemaking/voice_and_vision_ledger.md`](sensemaking/voice_and_vision_ledger.md)
 3. [`sensemaking/q01_gnn_experience_and_vision.md`](sensemaking/q01_gnn_experience_and_vision.md)
 4. [`sensemaking/q02_frameworks_scale_and_systems.md`](sensemaking/q02_frameworks_scale_and_systems.md)
+5. [`sensemaking/research_repo_blueprint.md`](sensemaking/research_repo_blueprint.md)
 
 For the derived technical plan:
 
@@ -52,8 +60,9 @@ For the derived technical plan:
 4. [`04_research_map.md`](04_research_map.md)
 5. [`notes/augrade_representation_reading_notes.md`](notes/augrade_representation_reading_notes.md)
 6. [`notes/augrade_strategy_from_model_prep.md`](notes/augrade_strategy_from_model_prep.md)
-7. [`05_annotation_intake.md`](05_annotation_intake.md)
-8. [`experiments/README.md`](experiments/README.md)
+7. [`notes/augrade_qa_alpha_refinement.md`](notes/augrade_qa_alpha_refinement.md)
+8. [`05_annotation_intake.md`](05_annotation_intake.md)
+9. [`experiments/README.md`](experiments/README.md)
 
 ## Link To Existing Work
 

@@ -1,11 +1,14 @@
 # Research Map
 
-Retrieved: 2026-05-05.
+Retrieved: 2026-05-05. Last updated: 2026-05-06.
 
 This is a seed map, not a complete literature review. The useful thread across
 the papers is consistent: vector-native or graph-structured representations are
 the right place to preserve detail, while raster or CNN features can help as
 auxiliary context.
+
+For the per-claim anchor list (which paper supports which talk-track claim) see
+[`TALK_TRACK.md`](TALK_TRACK.md).
 
 ## Directly Relevant To Layer-Blind CAD Graph Classification
 
@@ -60,8 +63,62 @@ Why it matters:
 - hierarchical labels
 - evaluated on FloorPlanCAD among other datasets
 - relevant to line-level classification and AEC drawing workflows
+- 1.3M weights vs 31–65M for raster baselines (PanCADNet, CADTransformer,
+  SymPoint), a strong cost-of-vector-native argument
 
 Source: https://portal.fis.tum.de/en/publications/vectorgraphnet-graph-attention-networks-for-accurate-segmentation/
+
+Preprint: https://arxiv.org/abs/2410.01336
+
+### Symbol As Points (SymPoint) And SymPoint-V2
+
+Liu, Tang, Hu, and Yu, ICLR 2024 (SymPoint); Liu et al. 2024 (SymPoint-V2).
+
+Why it matters:
+
+- frames vector primitives as a point cloud and uses a point transformer
+  with a Mask2Former-style spotting head
+- SymPoint-V2 reaches 90.1 PQ on FloorplanCAD by adding layer-feature
+  enhancement and position-guided training
+- the layer-feature module explicitly demonstrates how authored-layer signal
+  *helps* large-graph reasoning, which makes it a useful counterpoint to the
+  layer-blind first-pass assumption: the right move is not to reject layers
+  forever but to first prove the model can stand without them
+
+Sources:
+
+- https://openreview.net/forum?id=aOnUe8ah7j
+- https://arxiv.org/abs/2401.10556
+- https://arxiv.org/abs/2407.01928
+
+### CADSpotting
+
+Wang et al., 2024.
+
+Why it matters:
+
+- targets large-scale CAD drawings where naive primitive graphs run out of
+  memory or context budget
+- densely samples points along graphic primitives, then runs Point
+  Transformer V3 plus a sliding-window aggregation with weighted voting and
+  NMS
+- relevant as a scale baseline: when the take-home file already has 67k
+  primitives, real BIM drawings will dwarf that and need windowed strategies
+
+Source: https://arxiv.org/abs/2412.07377
+
+### Raster-To-Graph
+
+Hu, Chen, Yao, Xu, and Sun, Computer Graphics Forum 2024.
+
+Why it matters:
+
+- autoregressive graph prediction with an attention transformer for
+  floorplan recognition
+- complementary to vector-first approaches: useful when the input arrives as
+  a raster scan instead of clean DXF
+
+Source: https://onlinelibrary.wiley.com/doi/10.1111/cgf.15007
 
 ## Relevant To Preserving Vector Detail Instead Of Raster Detail
 
@@ -135,6 +192,75 @@ Why it matters:
 
 Source: https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216
 
+### Clash Context Representation And Change Component Prediction (MEP GCN)
+
+Sun and colleagues, Advanced Engineering Informatics 2023.
+
+Why it matters:
+
+- direct evidence that GCN-based models can predict which BIM components
+  must change in response to a clash, given local context features
+- closest published analogue to the edit-cascade flavor in
+  [`03_predictive_editing.md`](03_predictive_editing.md)
+- supports the validator-driven framing: cascades follow from clashes
+  detected by deterministic checks, with a learned head deciding *which*
+  components change
+
+Source: https://www.sciencedirect.com/science/article/abs/pii/S1474034623000241
+
+### Incorporating Context Into BIM-Derived Data With GNNs
+
+MDPI Buildings 2024.
+
+Why it matters:
+
+- frames BIM element classification as a context-aware GNN problem
+- explicitly motivates moving beyond single-element features to neighborhood
+  reasoning
+- useful as a "do GNNs help here" anchor for the IFC/BIM end of the stack
+
+Source: https://www.mdpi.com/2075-5309/14/2/527
+
+### IFC BIM Model Enrichment With Space Function Information Using GNNs
+
+Wang et al., MDPI Energies 2022.
+
+Why it matters:
+
+- three-step method enriching IFC representations with room-function labels
+  via GNN
+- useful when the system later has to assign function-level semantics
+  (kitchen / living / wet wall / chase) to recovered regions
+
+Source: https://www.mdpi.com/1996-1073/15/8/2937
+
+### Optimized GNNs For Spatial Recognition In BIM Semantic Enrichment
+
+Engineering Applications of Artificial Intelligence 2025.
+
+Why it matters:
+
+- explores node-feature design and edge-feature use for BIM enrichment
+- proposes Node-Enhanced Graph-BERT incorporating edge features
+- direct support for the typed-edge feature inventory in
+  [`02_graph_representations.md`](02_graph_representations.md)
+
+Source: https://www.sciencedirect.com/science/article/abs/pii/S0952197625003653
+
+### Automated BIM Generation For MEP Systems From CAD Data
+
+Automation in Construction 2025.
+
+Why it matters:
+
+- uses graph structures to represent MEP systems and integrate information
+  across multiple CAD drawings
+- pipeline-component matching with missing-information inference
+- aligns with the "infer systems inside a shell" flavor of predictive
+  editing once shell + fixtures + chases exist as graph nodes
+
+Source: https://www.sciencedirect.com/science/article/abs/pii/S0926580525005825
+
 ### Neural Relational Inference
 
 Kipf, Fetaya, Wang, Welling, and Zemel, ICML 2018.
@@ -148,6 +274,22 @@ Why it matters:
   routes-through, must-move-with, and violates-with
 
 Source: https://proceedings.mlr.press/v80/kipf18a.html
+
+### Graph Edit Networks
+
+Paassen, Schulz, Stewart, and Hammer, ICLR 2021.
+
+Why it matters:
+
+- explicit output layer that emits a sequence of typed graph edits to
+  transform an input graph into an output graph
+- direct architectural support for the residual-edit-token framing in
+  [`03_predictive_editing.md`](03_predictive_editing.md) and
+  [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) module M6
+- shows that learning over edit deltas is feasible without going through
+  whole-scene regeneration
+
+Source: https://openreview.net/forum?id=dlEJsyHGeaL
 
 ### Temporal Straightening For Latent Planning
 
@@ -315,6 +457,41 @@ Why it matters:
 - belongs after typed actions, validators, and sparse baselines are working
 
 Source: https://arxiv.org/abs/2603.11682
+
+## Adjacent Threads Worth Naming
+
+These do not anchor the core plan but are useful to acknowledge so the
+direction is not surprised by them in conversation.
+
+### Object-Centric World Models
+
+FOCUS (Frontiers in Neurorobotics 2025), Slot Structured World Models, and
+Dyn-O (NeurIPS 2025) all argue that object-centric latent state plus a
+relational dynamics module (typically a GNN or relational transformer) gives
+better multi-step generalization than monolithic encoders. The Augrade
+analogy is exact: typed object tokens, typed relation tokens, and a small
+relational module above them, with a deterministic state transition for the
+parts that should stay exact.
+
+Sources:
+
+- https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2025.1585386/full
+- https://www.cs.utexas.edu/~pstone/Papers/bib2html-links/dyno_neurips2025.pdf
+
+### CAD-LLM / Design-Intent Agents
+
+CADDesigner, CAD-LLM, and the Autodesk constraint-generation work explore
+LLM agents that emit parametric CAD code from natural language and sketches.
+This is orthogonal to the GNN thread: it lives at the intent-and-program
+end, not the geometry-and-relation end. Useful to keep on the radar as a
+later interface layer above the structured graph state, not as a competitor
+to it.
+
+Sources:
+
+- https://arxiv.org/html/2508.01031 (CADDesigner)
+- https://www.research.autodesk.com/publications/ai-lab-cad-llm/
+- https://www.research.autodesk.com/app/uploads/2025/10/Aligning-Constraint-Generation-with-Design-Intent-in-Parametric-CAD.pdf
 
 ## Working Takeaways
 
