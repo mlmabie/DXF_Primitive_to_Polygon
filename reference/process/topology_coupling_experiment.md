@@ -27,23 +27,28 @@ joining endpoint.
 4. split that segment at accepted projected points
 5. pass the split segments to the existing half-edge face walker
 
-The CLI flag is:
+The shorthand is `--mode coupled`, which bundles `snap=0.25` and `joint=0.025`:
 
 ```bash
+# preferred — single flag preset
+python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" /tmp/coupling_candidate --mode coupled
+
+# equivalent explicit form
 python3 tokenize_dxf.py "Airport Doors_MEZZ.dxf" /tmp/coupling_candidate \
   --snap-tolerance 0.25 \
   --joint-tolerance 0.025
 ```
 
-The default submission path remains unchanged unless `--joint-tolerance` is
-provided.
+`--snap-tolerance` and `--joint-tolerance` independently override the value
+supplied by `--mode`. The default submission path (`conservative` mode) remains
+unchanged: `joint=0` disables coupling entirely.
 
 ## Results On The Supplied DXF
 
 | run | walls | columns | curtain walls | coverage proxy | runtime | graph faces |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| default, no coupling | 1169 | 764 | 304 | 51.3% | 1.9s | 436 |
-| snap 0.25 + joints 0.025 | 1590 | 784 | 729 | 69.4% | 5.7s | 1302 |
+| `conservative` (default) | 1169 | 764 | 304 | 51.3% | 1.9s | 436 |
+| `coupled` (`--mode coupled`) | 1590 | 784 | 729 | 69.4% | 5.7s | 1302 |
 
 The prototype also adds direct `3DFACE` parsing. On this file it contributes 11
 accepted wall polygons; most scoped `3DFACE` records are degenerate line-like

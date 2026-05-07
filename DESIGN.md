@@ -85,6 +85,13 @@ This is the geometric analogue of tokenizer composition: characters become token
 5. Exact overlap-based coverage scoring instead of the current source-entity proxy.
 6. Learned tolerance and family disambiguation over ambiguous local regions.
 
+An in-flight extension of #1/#3 is the explicit T-junction coupling pass
+behind `--mode coupled`, which separates gap-closure from topological-vertex
+creation. On the supplied file it lifts the source-entity coverage proxy from
+51.3% to 69.4% at ~4s of additional runtime; it remains opt-in pending visual
+review at local zoom. Methodology in
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
+
 ## Research Direction
 
 The implementation is intentionally a deterministic geometry layer:

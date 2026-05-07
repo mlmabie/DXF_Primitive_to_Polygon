@@ -33,7 +33,7 @@ The result on the supplied file:
 
 | walls | columns | curtain walls | coverage |
 | --- | --- | --- | --- |
-| 1158 | 764 | 304 | 51.4% |
+| 1169 | 764 | 304 | 51.3% |
 
 Coverage is reported as a source-entity-length proxy; it is not the
 grader's exact primitive-inside-polygon coverage calculation.
@@ -86,15 +86,32 @@ are documented as future work, not part of the current solver.
 
 ## Parameter Notes
 
-The default result uses snap tolerance `0.5`. After
-HATCH extraction, snap tolerance mainly affects graph-face recovery
-around the direct carriers. More aggressive tolerances can add or
-reshuffle graph faces, but the coverage gain is marginal compared with
-the higher merge risk.
+The default result uses snap tolerance `0.5` with no T-junction coupling
+and matches the checked-in `out/` bundle. After HATCH extraction, snap
+tolerance mainly affects graph-face recovery around the direct carriers.
+More aggressive tolerances can add or reshuffle graph faces, but the
+coverage gain alone is marginal compared with the higher merge risk.
 
-### Advanced override: `--snap-tolerance`
+### `--mode` presets
 
-For experiments, `--snap-tolerance` overrides `--mode` and accepts:
+| mode | snap | joint | use |
+| --- | --- | --- | --- |
+| `conservative` (default) | 0.5 | off | submission/audit baseline; matches checked-in `out/` |
+| `liberal` | 0.75 | off | wider snap; mild over-merging on a few candidates |
+| `coupled` | 0.25 | 0.025 | tighter snap + explicit T-junction coupling; substantial coverage gain at ~4s extra runtime |
+
+`--mode coupled` decouples the two jobs snap tolerance was doing — closing
+drafting gaps versus creating topological vertices at T-junctions — by
+running an explicit segment-splitting pass before the face walk. On the
+supplied file this produces `1590` walls, `784` columns, and `729`
+curtain walls at `69.4%` source-entity coverage proxy. Full writeup with
+methodology and ablations:
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
+
+### Advanced override: `--snap-tolerance` and `--joint-tolerance`
+
+For experiments, `--snap-tolerance` and `--joint-tolerance` override the
+corresponding mode value. `--snap-tolerance` accepts:
 
 ```bash
 # scalar, uniform across all families
@@ -109,7 +126,9 @@ For experiments, `--snap-tolerance` overrides `--mode` and accepts:
 
 The adaptive mode chooses from `[0.1, 0.25, 0.5, 1.0]` using a simple
 wall-connectivity score; on this file it returns `0.5`, matching the
-default. This is an advanced surface, not the default path.
+default. `--joint-tolerance` accepts a scalar (0 disables T-junction
+coupling); use it to dial the coupling threshold independently of `--mode`.
+These are advanced surfaces, not the default path.
 
 ## Library, REPL, and review surfaces
 

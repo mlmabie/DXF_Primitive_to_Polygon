@@ -15,12 +15,24 @@ from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Sequence, 
 Point = Tuple[float, float]
 
 
-# The flagless/default run uses conservative=0.5 and matches the checked-in
-# out/ bundle. The liberal preset and --snap-tolerance forms are retained for
-# audit/debug sweeps, not as alternate submission outputs.
+# The flagless/default run uses conservative=0.5 with no T-junction coupling
+# and matches the checked-in out/ bundle. The other presets are sweeps:
+#   liberal  -- wider snap, recovers a few more candidates with mild over-merging
+#   coupled  -- tighter snap + explicit T-junction coupling; trades 4s of runtime
+#               for a substantial coverage gain (see
+#               reference/process/topology_coupling_experiment.md)
+# --snap-tolerance and --joint-tolerance override the corresponding mode value.
 SNAP_TOLERANCE_MODES: Dict[str, float] = {
     "conservative": 0.5,
     "liberal": 0.75,
+    "coupled": 0.25,
+}
+
+# Joint tolerance per mode. 0.0 disables T-junction coupling entirely.
+MODE_JOINT_TOLERANCES: Dict[str, float] = {
+    "conservative": 0.0,
+    "liberal": 0.0,
+    "coupled": 0.025,
 }
 
 
@@ -1916,10 +1928,13 @@ def main() -> None:
         choices=sorted(SNAP_TOLERANCE_MODES),
         default="conservative",
         help=(
-            "Named extraction preset. conservative=0.5 (submission/audit "
-            "default, matches checked-in out/), liberal=0.75 (slightly "
-            "wider snap, recovers a few more candidates with mild "
-            "over-merging). --snap-tolerance overrides --mode when given."
+            "Named extraction preset. conservative=snap 0.5, no coupling "
+            "(submission/audit default, matches checked-in out/); "
+            "liberal=snap 0.75, no coupling (slightly wider snap, mild "
+            "over-merging); coupled=snap 0.25 with T-junction coupling at "
+            "0.025 (substantial coverage gain at ~4s extra runtime; see "
+            "reference/process/topology_coupling_experiment.md). "
+            "--snap-tolerance and --joint-tolerance override the mode value."
         ),
     )
     parser.add_argument(
@@ -1937,15 +1952,21 @@ def main() -> None:
     parser.add_argument(
         "--joint-tolerance",
         type=float,
-        default=0.0,
+        default=None,
         help=(
-            "Experimental graph preprocessing: split segments where another "
-            "scoped endpoint lands on the segment interior within this distance. "
-            "Default 0 disables coupling."
+            "Graph preprocessing: split segments where another scoped "
+            "endpoint lands on the segment interior within this distance. "
+            "Defaults to the value supplied by --mode (0.0 for conservative/"
+            "liberal, 0.025 for coupled). Pass an explicit value to override."
         ),
     )
     args = parser.parse_args()
     effective_snap_tolerance = args.snap_tolerance if args.snap_tolerance is not None else SNAP_TOLERANCE_MODES[args.mode]
+    effective_joint_tolerance = (
+        args.joint_tolerance
+        if args.joint_tolerance is not None
+        else MODE_JOINT_TOLERANCES.get(args.mode, 0.0)
+    )
 
     # Load normalization output if provided — makes it the source of truth for maps
     norm = load_normalization(args.normalization)
@@ -1975,7 +1996,7 @@ def main() -> None:
     graph_segments = [segment for entity in entities for segment in entity_to_segments(entity)]
     graph_segments_for_faces, coupling_stats = couple_segments_at_endpoint_joints(
         graph_segments,
-        tolerance=args.joint_tolerance,
+        tolerance=effective_joint_tolerance,
     )
     graph_polygons = extract_faces_from_segments(graph_segments_for_faces, tolerance=snap_tolerance)
     polygons = dedupe_polygons(direct_polygons + hatch_polygons + graph_polygons)
@@ -1992,7 +2013,7 @@ def main() -> None:
     summary["snap_tolerance"] = (
         dict(snap_tolerance) if isinstance(snap_tolerance, Mapping) else snap_tolerance
     )
-    summary["joint_tolerance"] = args.joint_tolerance
+    summary["joint_tolerance"] = effective_joint_tolerance
     output_json = build_output_json(polygons, entities, runtime_seconds)
 
     (output_dir / "tokenization_output.json").write_text(json.dumps(output_json, indent=2), encoding="utf-8")
