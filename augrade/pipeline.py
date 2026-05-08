@@ -31,6 +31,7 @@ def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance,
         dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
     )
     summary["scalar_snap_tolerance"] = report_tolerance
+    summary["joint_tolerance"] = joint_tolerance
     output_json = td.build_output_json(polygons, entities, runtime_seconds=summary["runtime_seconds"])
     provenance = pu.build_provenance_index(entities)
 
