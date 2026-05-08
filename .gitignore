@@ -15,5 +15,19 @@ out/pipeline_manifest.json
 out/dashboard_assets/
 out/verify/
 out/**/*.png
+out_bundle/
 out_liberal/
 out_samples/
+gnn_plan/experiments/runs/*
+!gnn_plan/experiments/runs/.gitkeep
+
+# Local research cache. Keep durable reading notes in markdown, but avoid
+# committing downloaded paper binaries or saved web pages.
+reference/papers/*.pdf
+reference/papers/*.html
+
+# Local/private DWG source files. Keep READMEs/manifests, not DWG drawings.
+*.dwg
+
+# Local/private DWG example files.
+gnn_plan/data/examples/**/*.dwg
