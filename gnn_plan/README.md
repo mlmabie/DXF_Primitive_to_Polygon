@@ -9,6 +9,13 @@ For the short front door, original project prompt, KISS first slice, and
 reader contract, start with [`00_START_HERE.md`](00_START_HERE.md). The rest of this
 folder is a workbench for making that plan executable and falsifiable.
 
+For portable handoff artifacts, see:
+
+- [`artifacts/Augrade GNN Strategy.pdf`](artifacts/Augrade%20GNN%20Strategy.pdf)
+- [`artifacts/Augrade GNN Strategy v2.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2.pptx)
+- [`artifacts/Augrade Operating Doctrine Companion v2.docx`](artifacts/Augrade%20Operating%20Doctrine%20Companion%20v2.docx)
+- [`artifacts/Augrade Paper Trajectory Supplement v2.docx`](artifacts/Augrade%20Paper%20Trajectory%20Supplement%20v2.docx)
+
 ## Current Assumptions
 
 - Inputs are DWG and DXF.
