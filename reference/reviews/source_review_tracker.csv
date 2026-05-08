@@ -1,0 +1,631 @@
+id,tier,category,title,source_link,focus,prompt,status,notes
+1,Tier 0,Annotation / CAD graph substrate,Generalizing Floor Plans Using Graph Neural Networks,https://resourcecenter.ieee.org/conferences/icip-2021/spsicip21vid276,CAD primitive graph extraction; node classification for doors; compare graph-vs-raster; what labels/data contract did they use?,"Read this source for the Augrade GNN Strategy review: Generalizing Floor Plans Using Graph Neural Networks (https://resourcecenter.ieee.org/conferences/icip-2021/spsicip21vid276). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: CAD primitive graph extraction; node classification for doors; compare graph-vs-raster; what labels/data contract did they use?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Annotation / CAD graph substrate.",queued,
+2,Tier 0,Annotation / CAD graph substrate,Multi-Classification Of CAD Entities,https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4957759,Entity-as-node GNN for CAD floor plans; compare GAT/GATv2/PNA/UniMP-style choices; identify what they keep as vector features.,"Read this source for the Augrade GNN Strategy review: Multi-Classification Of CAD Entities (https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4957759). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Entity-as-node GNN for CAD floor plans; compare GAT/GATv2/PNA/UniMP-style choices; identify what they keep as vector features.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Annotation / CAD graph substrate.",queued,
+3,Tier 0,Annotation / CAD graph substrate,FloorPlanCAD,https://researchportal.hkust.edu.hk/en/publications/floorplancad-a-large-scale-cad-drawing-dataset-for-panoptic-symbo/,Line-level annotations and class taxonomy; what is reusable for annotation-to-object correspondence and drawing-level splits?,"Read this source for the Augrade GNN Strategy review: FloorPlanCAD (https://researchportal.hkust.edu.hk/en/publications/floorplancad-a-large-scale-cad-drawing-dataset-for-panoptic-symbo/). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Line-level annotations and class taxonomy; what is reusable for annotation-to-object correspondence and drawing-level splits?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Annotation / CAD graph substrate.",queued,
+4,Tier 0,Annotation / CAD graph substrate,VectorGraphNET,https://arxiv.org/abs/2410.01336,Vector-native graph attention for technical drawing segmentation; cost/accuracy vs raster baselines; what supports our vector-first claim?,"Read this source for the Augrade GNN Strategy review: VectorGraphNET (https://arxiv.org/abs/2410.01336). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Vector-native graph attention for technical drawing segmentation; cost/accuracy vs raster baselines; what supports our vector-first claim?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Annotation / CAD graph substrate.",queued,
+5,Tier 1,Annotation / CAD graph substrate,SymPoint,https://openreview.net/forum?id=aOnUe8ah7j,Vector primitives as point cloud; spotting head; what does point-style geometry preserve/lose relative to graph supervectors?,"Read this source for the Augrade GNN Strategy review: SymPoint (https://openreview.net/forum?id=aOnUe8ah7j). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Vector primitives as point cloud; spotting head; what does point-style geometry preserve/lose relative to graph supervectors?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Annotation / CAD graph substrate.",queued,
+6,Tier 1,Annotation / CAD graph substrate,SymPoint-V2,https://arxiv.org/abs/2407.01928,"Layer-feature enhancement and position-guided training; how does authored-layer signal help, and how should we ablate it against layer-blind first pass?","Read this source for the Augrade GNN Strategy review: SymPoint-V2 (https://arxiv.org/abs/2407.01928). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Layer-feature enhancement and position-guided training; how does authored-layer signal help, and how should we ablate it against layer-blind first pass?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Annotation / CAD graph substrate.",queued,
+7,Tier 1,Scale / windowing,CADSpotting,https://arxiv.org/abs/2412.07377,Large-scale CAD drawings; dense sampling and sliding-window aggregation; what is the scale failure mode of naive primitive graphs?,"Read this source for the Augrade GNN Strategy review: CADSpotting (https://arxiv.org/abs/2412.07377). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Large-scale CAD drawings; dense sampling and sliding-window aggregation; what is the scale failure mode of naive primitive graphs?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Scale / windowing.",queued,
+8,Tier 2,Raster fallback,Raster-To-Graph,https://onlinelibrary.wiley.com/doi/10.1111/cgf.15007,Autoregressive graph prediction from raster floorplans; what is useful when clean DXF/DWG is unavailable?,"Read this source for the Augrade GNN Strategy review: Raster-To-Graph (https://onlinelibrary.wiley.com/doi/10.1111/cgf.15007). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Autoregressive graph prediction from raster floorplans; what is useful when clean DXF/DWG is unavailable?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: Raster fallback.",queued,
+9,Tier 0,Vector detail,VectorFloorSeg,https://openaccess.thecvf.com/content/CVPR2023/html/Yang_VectorFloorSeg_Two-Stream_Graph_Attention_Network_for_Vectorized_Roughcast_Floorplan_Segmentation_CVPR_2023_paper.html,Line/region dual stream and graph attention; extract lessons for explicit face/region nodes and room boundaries.,"Read this source for the Augrade GNN Strategy review: VectorFloorSeg (https://openaccess.thecvf.com/content/CVPR2023/html/Yang_VectorFloorSeg_Two-Stream_Graph_Attention_Network_for_Vectorized_Roughcast_Floorplan_Segmentation_CVPR_2023_paper.html). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Line/region dual stream and graph attention; extract lessons for explicit face/region nodes and room boundaries.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Vector detail.",queued,
+10,Tier 1,Vector detail,Indoor Elements Classification Via Floor Plan Graphs,https://www.mdpi.com/2220-9964/10/2/97,Region adjacency graph; wall/door/symbol/room classification; what shape-preserving features matter?,"Read this source for the Augrade GNN Strategy review: Indoor Elements Classification Via Floor Plan Graphs (https://www.mdpi.com/2220-9964/10/2/97). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Region adjacency graph; wall/door/symbol/room classification; what shape-preserving features matter?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Vector detail.",queued,
+11,Tier 0,Predictive editing,Graph Neural Networks For 2D Architectural Detail Drawings,https://www.sciencedirect.com/science/article/abs/pii/S0926580524006721,"Drawing graph standardization, classification, error detection; evaluate relevance to review/validator residual surfaces.","Read this source for the Augrade GNN Strategy review: Graph Neural Networks For 2D Architectural Detail Drawings (https://www.sciencedirect.com/science/article/abs/pii/S0926580524006721). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Drawing graph standardization, classification, error detection; evaluate relevance to review/validator residual surfaces.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Predictive editing.",queued,
+12,Tier 1,Hybrid floorplan reasoning,Semantic Floorplan Segmentation Using Self-Constructing Graph Networks,https://www.sciencedirect.com/science/article/pii/S0926580524003856,CNN+GCN long-range dependencies; when is induced graph structure useful vs vector graph state?,"Read this source for the Augrade GNN Strategy review: Semantic Floorplan Segmentation Using Self-Constructing Graph Networks (https://www.sciencedirect.com/science/article/pii/S0926580524003856). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: CNN+GCN long-range dependencies; when is induced graph structure useful vs vector graph state?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Hybrid floorplan reasoning.",queued,
+13,Tier 0,Predictive editing,Predicting Building Layout Structure And Features Via Planar Duality,https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216,Vertex-edge-face representation; face adjacency message passing; what supports explicit face nodes for edit reasoning?,"Read this source for the Augrade GNN Strategy review: Predicting Building Layout Structure And Features Via Planar Duality (https://www.sciencedirect.com/science/article/abs/pii/S0926580525007216). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Vertex-edge-face representation; face adjacency message passing; what supports explicit face nodes for edit reasoning?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Predictive editing.",queued,
+14,Tier 0,Edit cascades,Clash Context Representation And Change Component Prediction,https://www.sciencedirect.com/science/article/abs/pii/S1474034623000241,GCN for BIM clash context and change-component prediction; extract analogy for validator-driven edit cascades.,"Read this source for the Augrade GNN Strategy review: Clash Context Representation And Change Component Prediction (https://www.sciencedirect.com/science/article/abs/pii/S1474034623000241). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: GCN for BIM clash context and change-component prediction; extract analogy for validator-driven edit cascades.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Edit cascades.",queued,
+15,Tier 1,BIM enrichment,Incorporating Context Into BIM-Derived Data With GNNs,https://www.mdpi.com/2075-5309/14/2/527,Context-aware BIM classification; quantify what neighborhood reasoning adds over local features.,"Read this source for the Augrade GNN Strategy review: Incorporating Context Into BIM-Derived Data With GNNs (https://www.mdpi.com/2075-5309/14/2/527). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Context-aware BIM classification; quantify what neighborhood reasoning adds over local features.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: BIM enrichment.",queued,
+16,Tier 1,BIM enrichment,IFC BIM Model Enrichment With Space Function Information Using GNNs,https://www.mdpi.com/1996-1073/15/8/2937,Room/space function enrichment; relevance to room/zone/fixture semantics after graph recovery.,"Read this source for the Augrade GNN Strategy review: IFC BIM Model Enrichment With Space Function Information Using GNNs (https://www.mdpi.com/1996-1073/15/8/2937). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Room/space function enrichment; relevance to room/zone/fixture semantics after graph recovery.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: BIM enrichment.",queued,
+17,Tier 2,BIM enrichment,Optimized GNNs For Spatial Recognition In BIM Semantic Enrichment,https://www.sciencedirect.com/science/article/abs/pii/S0952197625003653,Node/edge feature design and Graph-BERT-like methods; what typed edge features transfer?,"Read this source for the Augrade GNN Strategy review: Optimized GNNs For Spatial Recognition In BIM Semantic Enrichment (https://www.sciencedirect.com/science/article/abs/pii/S0952197625003653). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Node/edge feature design and Graph-BERT-like methods; what typed edge features transfer?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: BIM enrichment.",queued,
+18,Tier 1,MEP inference,Automated BIM Generation For MEP Systems From CAD Data,https://www.sciencedirect.com/science/article/abs/pii/S0926580525005825,Graph structures for MEP system generation from CAD; what is the minimum shell/fixture graph needed for system inference?,"Read this source for the Augrade GNN Strategy review: Automated BIM Generation For MEP Systems From CAD Data (https://www.sciencedirect.com/science/article/abs/pii/S0926580525005825). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Graph structures for MEP system generation from CAD; what is the minimum shell/fixture graph needed for system inference?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: MEP inference.",queued,
+19,Tier 1,Latent dependencies,Neural Relational Inference,https://proceedings.mlr.press/v80/kipf18a.html,Latent interaction graphs for dynamics; map to hidden edit dependencies and must-move-with relations.,"Read this source for the Augrade GNN Strategy review: Neural Relational Inference (https://proceedings.mlr.press/v80/kipf18a.html). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Latent interaction graphs for dynamics; map to hidden edit dependencies and must-move-with relations.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Latent dependencies.",queued,
+20,Tier 0,Graph edit actions,Graph Edit Networks,https://openreview.net/forum?id=dlEJsyHGeaL,Typed graph edit outputs; extract action grammar and loss lessons for M6 structured readout.,"Read this source for the Augrade GNN Strategy review: Graph Edit Networks (https://openreview.net/forum?id=dlEJsyHGeaL). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Typed graph edit outputs; extract action grammar and loss lessons for M6 structured readout.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Graph edit actions.",queued,
+21,Tier 2,Planning representation,Temporal Straightening For Latent Planning,https://arxiv.org/abs/2603.12231,"Latent trajectory conditioning for planning; use as future objective for edit/residual paths, not MVP.","Read this source for the Augrade GNN Strategy review: Temporal Straightening For Latent Planning (https://arxiv.org/abs/2603.12231). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Latent trajectory conditioning for planning; use as future objective for edit/residual paths, not MVP.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: Planning representation.",queued,
+22,Tier 0,Representation boundary,Geometric Deep Learning,https://arxiv.org/abs/2104.13478,"Use as vocabulary for locality, symmetry, hierarchy, graphs; clarify what it does and does not justify for authored CAD.","Read this source for the Augrade GNN Strategy review: Geometric Deep Learning (https://arxiv.org/abs/2104.13478). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Use as vocabulary for locality, symmetry, hierarchy, graphs; clarify what it does and does not justify for authored CAD.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Representation boundary.",queued,
+23,Tier 1,Representation alignment,A Mechanistic Analysis Of Sim-And-Real Co-Training,https://arxiv.org/abs/2604.13645,Cross-domain alignment while preserving domain identity; map to pool-for-geometry/tag-for-provenance and rewrite tests.,"Read this source for the Augrade GNN Strategy review: A Mechanistic Analysis Of Sim-And-Real Co-Training (https://arxiv.org/abs/2604.13645). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Cross-domain alignment while preserving domain identity; map to pool-for-geometry/tag-for-provenance and rewrite tests.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Representation alignment.",queued,
+24,Tier 1,Equivariance,Geometric Algebra Transformer,https://arxiv.org/abs/2305.18415,"Representation choices for geometric objects; what would multivectors buy for frames, surfaces, clearances, support relations?","Read this source for the Augrade GNN Strategy review: Geometric Algebra Transformer (https://arxiv.org/abs/2305.18415). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Representation choices for geometric objects; what would multivectors buy for frames, surfaces, clearances, support relations?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Equivariance.",queued,
+25,Tier 1,Equivariance,Choosing A Geometric Algebra For Equivariant Transformers,https://proceedings.mlr.press/v238/haan24a.html,Carrier choice changes expressivity and compute; translate to primitive/supervector/face/edit-token design.,"Read this source for the Augrade GNN Strategy review: Choosing A Geometric Algebra For Equivariant Transformers (https://proceedings.mlr.press/v238/haan24a.html). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Carrier choice changes expressivity and compute; translate to primitive/supervector/face/edit-token design.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Equivariance.",queued,
+26,Tier 2,Equivariance,Any-Subgroup Equivariant Networks Via Symmetry Breaking,https://openreview.net/forum?id=jz3d7nvtGz,Family-conditioned invariance; compare shared trunk vs family heads vs separate models for rewrite collapse.,"Read this source for the Augrade GNN Strategy review: Any-Subgroup Equivariant Networks Via Symmetry Breaking (https://openreview.net/forum?id=jz3d7nvtGz). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Family-conditioned invariance; compare shared trunk vs family heads vs separate models for rewrite collapse.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: Equivariance.",queued,
+27,Tier 1,System interfaces,Scalable Co-Design Via Linear Design Problems,https://arxiv.org/abs/2603.29083,"Compositional design interfaces; extract language for stable interfaces, coupling, and validator boundaries.","Read this source for the Augrade GNN Strategy review: Scalable Co-Design Via Linear Design Problems (https://arxiv.org/abs/2603.29083). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Compositional design interfaces; extract language for stable interfaces, coupling, and validator boundaries.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: System interfaces.",queued,
+28,Tier 2,System interfaces,A Mathematical Theory Of Co-Design,https://arxiv.org/abs/1512.08055,Foundational co-design; background only. Pull vocabulary for feasibility/resource constraints.,"Read this source for the Augrade GNN Strategy review: A Mathematical Theory Of Co-Design (https://arxiv.org/abs/1512.08055). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Foundational co-design; background only. Pull vocabulary for feasibility/resource constraints.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: System interfaces.",queued,
+29,Tier 0,Calibration,Algorithmic Learning In A Random World,https://www.alrw.net/,Conformal prediction as auto-merge/reject/review band; produce practical recipe for small-label CAD relations.,"Read this source for the Augrade GNN Strategy review: Algorithmic Learning In A Random World (https://www.alrw.net/). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Conformal prediction as auto-merge/reject/review band; produce practical recipe for small-label CAD relations.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Calibration.",queued,
+30,Tier 1,Memory,Dense Associative Memory With Exponential Capacity,https://arxiv.org/abs/2601.00984,Prototype memory for low-label merge/review cases; decide where memory helps vs sparse scores.,"Read this source for the Augrade GNN Strategy review: Dense Associative Memory With Exponential Capacity (https://arxiv.org/abs/2601.00984). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Prototype memory for low-label merge/review cases; decide where memory helps vs sparse scores.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Memory.",queued,
+31,Tier 1,Representation geometry,Goodfire EVEE,https://www.goodfire.ai/research/evee-explaining-genetic-variants,Feature geometry and probe/readout lessons; translate from biology to validator residuals and CAD motif geometry.,"Read this source for the Augrade GNN Strategy review: Goodfire EVEE (https://www.goodfire.ai/research/evee-explaining-genetic-variants). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Feature geometry and probe/readout lessons; translate from biology to validator residuals and CAD motif geometry.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Representation geometry.",queued,
+32,Tier 2,RL/search,Entropy-Preserving Reinforcement Learning,https://arxiv.org/abs/2603.11682,Maintain solution diversity in graph-edit policies; useful after action grammar and validators exist.,"Read this source for the Augrade GNN Strategy review: Entropy-Preserving Reinforcement Learning (https://arxiv.org/abs/2603.11682). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Maintain solution diversity in graph-edit policies; useful after action grammar and validators exist.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: RL/search.",queued,
+33,Tier 2,Object-centric world models,FOCUS,https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2025.1585386/full,Object-centric latent state plus relational dynamics; map to world-model bridge and graph substrate.,"Read this source for the Augrade GNN Strategy review: FOCUS (https://www.frontiersin.org/journals/neurorobotics/articles/10.3389/fnbot.2025.1585386/full). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Object-centric latent state plus relational dynamics; map to world-model bridge and graph substrate.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: Object-centric world models.",queued,
+34,Tier 2,Object-centric world models,Dyn-O,https://www.cs.utexas.edu/~pstone/Papers/bib2html-links/dyno_neurips2025.pdf,Object-centric dynamics; look for lessons on multiscale graph state from latent worlds.,"Read this source for the Augrade GNN Strategy review: Dyn-O (https://www.cs.utexas.edu/~pstone/Papers/bib2html-links/dyno_neurips2025.pdf). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Object-centric dynamics; look for lessons on multiscale graph state from latent worlds.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: Object-centric world models.",queued,
+35,Tier 2,CAD agents,CADDesigner,https://arxiv.org/html/2508.01031,LLM/CAD generation interface layer; contrast with vector graph substrate and validators.,"Read this source for the Augrade GNN Strategy review: CADDesigner (https://arxiv.org/html/2508.01031). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: LLM/CAD generation interface layer; contrast with vector graph substrate and validators.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: CAD agents.",queued,
+36,Tier 2,CAD agents,CAD-LLM,https://www.research.autodesk.com/publications/ai-lab-cad-llm/,Natural-language/parametric CAD agents; what can be borrowed for intent interface above graph state?,"Read this source for the Augrade GNN Strategy review: CAD-LLM (https://www.research.autodesk.com/publications/ai-lab-cad-llm/). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Natural-language/parametric CAD agents; what can be borrowed for intent interface above graph state?
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: CAD agents.",queued,
+37,Tier 2,CAD agents,Autodesk Constraint Generation,https://www.research.autodesk.com/app/uploads/2025/10/Aligning-Constraint-Generation-with-Design-Intent-in-Parametric-CAD.pdf,Design-intent constraints; relevance to typed action grammar and validators.,"Read this source for the Augrade GNN Strategy review: Autodesk Constraint Generation (https://www.research.autodesk.com/app/uploads/2025/10/Aligning-Constraint-Generation-with-Design-Intent-in-Parametric-CAD.pdf). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Design-intent constraints; relevance to typed action grammar and validators.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 2. Category: CAD agents.",queued,
+38,Tier 0,Nested embeddings,Matryoshka Representation Learning,https://huggingface.co/papers/2205.13147,"Nested representations; translate embedding size into product knobs: cache, routing, offline discovery.","Read this source for the Augrade GNN Strategy review: Matryoshka Representation Learning (https://huggingface.co/papers/2205.13147). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Nested representations; translate embedding size into product knobs: cache, routing, offline discovery.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Nested embeddings.",queued,
+39,Tier 0,Verifier environments,Prime Intellect Verifiers,https://docs.primeintellect.ai/verifiers/overview,Environment = task inputs + harness + reward/rubric; map to CAD verifier environment after M7 matures.,"Read this source for the Augrade GNN Strategy review: Prime Intellect Verifiers (https://docs.primeintellect.ai/verifiers/overview). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Environment = task inputs + harness + reward/rubric; map to CAD verifier environment after M7 matures.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Verifier environments.",queued,
+40,Tier 1,Verifier environments,Prime Intellect Lab,https://docs.primeintellect.ai/hosted-training/what-is-lab,Hosted environments/training/evals; decide what to outsource vs keep in-house.,"Read this source for the Augrade GNN Strategy review: Prime Intellect Lab (https://docs.primeintellect.ai/hosted-training/what-is-lab). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Hosted environments/training/evals; decide what to outsource vs keep in-house.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Verifier environments.",queued,
+41,Tier 1,Molecular analogy,Molecular GNN Review / Nature Machine Intelligence,https://www.nature.com/articles/s42256-021-00438-4,Molecules as atom/bond graphs; extract substructure/motif analogy for supervector molecules.,"Read this source for the Augrade GNN Strategy review: Molecular GNN Review / Nature Machine Intelligence (https://www.nature.com/articles/s42256-021-00438-4). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Molecules as atom/bond graphs; extract substructure/motif analogy for supervector molecules.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 1. Category: Molecular analogy.",queued,
+42,Tier 0,Representation geometry,Goodfire public positioning,https://www.goodfire.ai/,Dictionary-to-geometry framing; use to sharpen the representation geometry and compiler-loop language.,"Read this source for the Augrade GNN Strategy review: Goodfire public positioning (https://www.goodfire.ai/). Create a poster-ready summary for my review.
+
+Context: I am building a vector-first CAD/BIM graph substrate with deterministic geometry, supervectors, validators, calibrated relation scoring, optional GNN/local message passing, prototype/matryoshka memory, and a rule-compilation loop.
+
+Focus for this source: Dictionary-to-geometry framing; use to sharpen the representation geometry and compiler-loop language.
+
+Output format:
+1. 5-sentence executive summary.
+2. What representation does the paper/source use? Be concrete about nodes/tokens, edges/relations, labels, losses, and data contract.
+3. What does it prove or fail to prove for Augrade?
+4. What should I adopt, avoid, or test?
+5. Poster block: one diagram idea, one key table, three takeaways, and one skeptical caveat.
+6. Where it fits in the paper ladder: annotation-to-object, rewrite-stable graphs, matryoshka embeddings, supervector molecules, quality loops, verifier environments, or future mech-interp.
+
+Priority: Tier 0. Category: Representation geometry.",queued,

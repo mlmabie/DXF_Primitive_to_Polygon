@@ -76,10 +76,23 @@ primary output.
 Read this if you want the bridge from this geometric scaffold to a
 learned review system.
 
+- [`gnn_plan/`](gnn_plan/) - next-phase setup for layer-blind DWG/DXF
+  graph classification, annotation intake, and predictive/editing
+  modeling
 - [`reference/research/thesis.md`](reference/research/thesis.md) — short, evidence-first thesis grounded in this file
 - [`reference/research/research_extension.md`](reference/research/research_extension.md) — broader GenAI research framing and staged extension plan
 - [`reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md`](reference/experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md) — the merge-relation hypothesis sharpened
 - [`reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md`](reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md) — phases 0–8
+
+The `gnn_plan/` materials are next-phase technical notes for DWG/DXF graph
+learning and predictive-editing experiments, not a claim that one final GNN
+architecture has already been selected. The motivating prompt is to reason from
+DWG/DXF files treated as a layer-blind, unsorted vector soup, test graph
+approaches for classifying primitives and supervectors into representative
+elements, and explore predictive-editing questions such as system inference,
+cascades, conflicts, and dependencies. Start with
+[`gnn_plan/00_START_HERE.md`](gnn_plan/00_START_HERE.md) for the original
+prompt, reader contract, KISS path, and epistemic-status legend.
 
 The geometric solver in layer 1 is the runnable artifact. Later layers
 are documented as future work, not part of the current solver.
@@ -271,6 +284,8 @@ scripts/
   grid_search.py                      snap x joint sweep ranked by HATCH-IoU + coverage
   verify_dashboards.py                optional: screenshot-verify the review dashboards
   verify_regions.py                   optional: screenshot-verify region renders
+
+gnn_plan/                             next-phase GNN and predictive-editing setup
 
 out/                                  default generated bundle (SVGs + JSON + report)
 ```
