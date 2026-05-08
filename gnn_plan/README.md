@@ -16,6 +16,9 @@ For portable handoff artifacts, see:
 - [`artifacts/Augrade Operating Doctrine Companion v2.docx`](artifacts/Augrade%20Operating%20Doctrine%20Companion%20v2.docx)
 - [`artifacts/Augrade Paper Trajectory Supplement v2.docx`](artifacts/Augrade%20Paper%20Trajectory%20Supplement%20v2.docx)
 
+The markdown files remain the repo source of truth; the PDF/PPTX/DOCX files are
+portable handoff exports.
+
 ## Current Assumptions
 
 - Inputs are DWG and DXF.
