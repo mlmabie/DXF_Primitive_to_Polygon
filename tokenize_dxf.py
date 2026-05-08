@@ -18,13 +18,17 @@ Point = Tuple[float, float]
 # The flagless/default run uses conservative=0.5 with no T-junction coupling
 # and matches the checked-in out/ bundle. The other presets are sweeps:
 #   liberal  -- wider snap, recovers a few more candidates with mild over-merging
-#   coupled  -- tighter snap + explicit T-junction coupling; trades 4s of runtime
-#               for a substantial coverage gain (see
-#               reference/process/topology_coupling_experiment.md)
+#   joined   -- default snap + light T-junction coupling; targets the "wrong
+#               polygon shape from a missed T-junction" failure without
+#               changing gap-closure behaviour
+#   coupled  -- tighter snap + T-junction coupling; maximally aggressive
+# Both joined and coupled add ~3-4s of runtime versus conservative. See
+# reference/process/topology_coupling_experiment.md for ablations.
 # --snap-tolerance and --joint-tolerance override the corresponding mode value.
 SNAP_TOLERANCE_MODES: Dict[str, float] = {
     "conservative": 0.5,
     "liberal": 0.75,
+    "joined": 0.5,
     "coupled": 0.25,
 }
 
@@ -32,6 +36,7 @@ SNAP_TOLERANCE_MODES: Dict[str, float] = {
 MODE_JOINT_TOLERANCES: Dict[str, float] = {
     "conservative": 0.0,
     "liberal": 0.0,
+    "joined": 0.025,
     "coupled": 0.025,
 }
 
@@ -1931,9 +1936,13 @@ def main() -> None:
             "Named extraction preset. conservative=snap 0.5, no coupling "
             "(submission/audit default, matches checked-in out/); "
             "liberal=snap 0.75, no coupling (slightly wider snap, mild "
-            "over-merging); coupled=snap 0.25 with T-junction coupling at "
-            "0.025 (substantial coverage gain at ~4s extra runtime; see "
-            "reference/process/topology_coupling_experiment.md). "
+            "over-merging); joined=snap 0.5 with T-junction coupling at "
+            "0.025 (default gap-closure plus T-junction handling; targets "
+            "wrong-shape polygons from missed junctions); "
+            "coupled=snap 0.25 with T-junction coupling at 0.025 "
+            "(maximally aggressive). See "
+            "reference/process/topology_coupling_experiment.md for the "
+            "joined/coupled ablation. "
             "--snap-tolerance and --joint-tolerance override the mode value."
         ),
     )

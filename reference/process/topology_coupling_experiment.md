@@ -45,10 +45,24 @@ unchanged: `joint=0` disables coupling entirely.
 
 ## Results On The Supplied DXF
 
-| run | walls | columns | curtain walls | coverage proxy | runtime | graph faces |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `conservative` (default) | 1169 | 764 | 304 | 51.3% | 1.9s | 436 |
-| `coupled` (`--mode coupled`) | 1590 | 784 | 729 | 69.4% | 5.7s | 1302 |
+| run | snap | joint | walls | columns | curtain walls | coverage proxy | runtime |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `conservative` (default) | 0.5 | off | 1169 | 764 | 304 | 51.3% | 1.9s |
+| `liberal` | 0.75 | off | 1184 | 781 | 309 | 51.8% | 2.0s |
+| `joined` | 0.5 | 0.025 | 1610 | 782 | 825 | 71.3% | 5.0s |
+| `coupled` | 0.25 | 0.025 | 1590 | 784 | 729 | 69.4% | 5.7s |
+
+Two readings of the joined-vs-coupled gap matter. First, on this file
+`joined` strictly dominates `coupled` on coverage despite a wider snap.
+That tells us snap=0.25 is fragmenting more legitimate corners than it
+recovers, which is the failure mode the snap parameter has when it is
+asked to do both gap-closure and T-junction creation at once. Decoupling
+those jobs is the whole point of the coupling pass; once joints are
+explicit, you want snap as conservative as the gap distribution allows.
+
+Second, the `liberal` row barely moves from `conservative` — wider snap
+without coupling is not where the recovery is. The coupling pass is the
+load-bearing change.
 
 The prototype also adds direct `3DFACE` parsing. On this file it contributes 11
 accepted wall polygons; most scoped `3DFACE` records are degenerate line-like

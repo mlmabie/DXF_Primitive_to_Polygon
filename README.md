@@ -98,14 +98,19 @@ coverage gain alone is marginal compared with the higher merge risk.
 | --- | --- | --- | --- |
 | `conservative` (default) | 0.5 | off | submission/audit baseline; matches checked-in `out/` |
 | `liberal` | 0.75 | off | wider snap; mild over-merging on a few candidates |
-| `coupled` | 0.25 | 0.025 | tighter snap + explicit T-junction coupling; substantial coverage gain at ~4s extra runtime |
+| `joined` | 0.5 | 0.025 | default snap with explicit T-junction coupling; targets wrong-shape polygons from missed junctions without changing gap-closure |
+| `coupled` | 0.25 | 0.025 | tighter snap + T-junction coupling; maximally aggressive |
 
-`--mode coupled` decouples the two jobs snap tolerance was doing — closing
-drafting gaps versus creating topological vertices at T-junctions — by
-running an explicit segment-splitting pass before the face walk. On the
-supplied file this produces `1590` walls, `784` columns, and `729`
-curtain walls at `69.4%` source-entity coverage proxy. Full writeup with
-methodology and ablations:
+T-junction coupling decouples the two jobs snap tolerance was doing —
+closing drafting gaps versus creating topological vertices at T-junctions
+— by running an explicit segment-splitting pass before the face walk.
+`joined` keeps the default snap and adds only the coupling pass; on the
+supplied file it produces `1610` walls, `782` columns, and `825` curtain
+walls at `71.3%` source-entity coverage proxy. `coupled` additionally
+tightens snap to 0.25 (`1590 / 784 / 729 @ 69.4%`); on this file the
+tighter snap fragments more legitimate corners than it recovers, so
+`joined` actually scores higher. Full writeup with methodology and
+ablations:
 [`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
 
 ### Advanced override: `--snap-tolerance` and `--joint-tolerance`
