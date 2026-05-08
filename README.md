@@ -169,7 +169,7 @@ QA helpers and require Playwright.
 The file is not geometry plus random noise. It is authored variation
 over a stable object structure: layer-schema differences, carrier
 differences (`LINE` vs `LWPOLYLINE` vs `HATCH` vs `CIRCLE`),
-decomposition differences, drafting-zone differences. Three concrete
+decomposition differences, drafting-zone differences. Four concrete
 findings fed back into the solver's defaults:
 
 1. **Cross-layer pooling is real.** `A-GLAZING MULLION` (`LINE`-only)
@@ -185,6 +185,17 @@ findings fed back into the solver's defaults:
 
 3. **Snap tolerance has a validated default.** The wall-family
    connectivity sweep selects 0.5, which is the default.
+
+4. **HATCH companion layers are hidden ground truth.** Fill-vs-outline
+   pairs like `A-EXTERNAL WALL` / `A-EXTERNAL WALL HATCH` (and the
+   `S-COLUMN` / `S-COLUMN HATCH` pair) describe the same physical
+   element with two independent carrier types. A graph-recovered
+   polygon's IoU against the HATCH boundary on the companion layer is
+   a self-supervised correctness signal — it captures *shape* correctness,
+   which the source-entity coverage proxy misses by construction. Absent
+   the DWG pair or a second labelled DXF, this is the strongest internal
+   validation signal available, and it is what a parameter grid search
+   should optimise against rather than coverage alone.
 
 The principle tying these together is **"pool for geometry, tag for
 provenance"** — use layer variants and carrier choices together for

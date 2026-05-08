@@ -96,6 +96,14 @@ explicit. Both remain opt-in pending visual review at local zoom.
 Methodology in
 [`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
 
+Going further with parameter sweeps is gated on a stronger objective
+than the source-entity coverage proxy. The natural internal signal is
+HATCH-boundary IoU against graph-recovered polygons on companion layers
+(see README "What the analysis found" #4); the natural external signal
+would be the DWG pair of this file or a second labelled DXF. A grid
+search over `(snap, joint)` ranked by a composite of HATCH-IoU + coverage
++ topology-validity is the next concrete step.
+
 ## Research Direction
 
 The implementation is intentionally a deterministic geometry layer:

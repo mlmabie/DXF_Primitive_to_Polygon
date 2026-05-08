@@ -99,5 +99,30 @@ to decide which primitive graph couplings produce valid architectural polygons.
 ## Read
 
 This is a strong next-step direction, not a default replacement yet. The recovery
-gain is real, but the coupled run is about 3x slower and needs closer visual
-review at local zoom before it should replace the current submission default.
+gain is real, but the joined/coupled runs are ~3x slower and the new polygons
+need closer visual review at local zoom before either should replace the current
+submission default.
+
+## What Would Make A Real Grid Search
+
+The source-entity coverage proxy is a length signal, not a shape signal. It
+cannot tell us whether `joined` produces *better* polygons or just *more*
+length-coverage. Two stronger objectives are visible from the file itself:
+
+- **HATCH-IoU as hidden ground truth.** HATCH companion layers
+  (`A-EXTERNAL WALL HATCH`, `S-COLUMN HATCH`, ...) describe the same physical
+  elements as their outline twins, with independent carriers. Scoring
+  graph-recovered polygons by IoU against the HATCH boundary on the matched
+  companion layer gives a self-supervised correctness signal that the coverage
+  proxy structurally cannot. The 1934 HATCH primitives in this file would back
+  several hundred IoU comparisons per family.
+- **Topology validity.** Self-intersection check (currently we only enforce
+  closed + clockwise + ≥3 unique vertices), aspect-ratio sanity per family,
+  rejection on unrealistic count blowups.
+
+A composite score of `0.5 * HATCH_IoU + 0.3 * coverage + 0.2 * merge_label_acc`
+with hard rejections for invalid polygons is the natural grid-search objective.
+Axes worth sweeping: snap ∈ {0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 1.0} × joint ∈
+{0, 0.01, 0.025, 0.05, 0.1}. Per-family snap is a stretch axis worth running
+once if the global search hits a ceiling. Going beyond that wants the DWG pair
+of this file or a second labelled DXF.
