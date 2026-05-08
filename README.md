@@ -135,6 +135,21 @@ default. `--joint-tolerance` accepts a scalar (0 disables T-junction
 coupling); use it to dial the coupling threshold independently of `--mode`.
 These are advanced surfaces, not the default path.
 
+### Grid search
+
+[`scripts/grid_search.py`](scripts/grid_search.py) sweeps `snap × joint`
+ranked by HATCH-IoU + coverage. Outputs a results CSV and a Pareto-front
+SVG. Empirical findings are written up in
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md);
+the headline is that coupling (joint > 0) is the load-bearing change and
+snap is robust across `[0.25, 0.75]` once joints are explicit. `joined`
+and `coupled` both sit on the Pareto front.
+
+```bash
+# 35 combinations, ~3 minutes
+python3 scripts/grid_search.py "Airport Doors_MEZZ.dxf" reference/process/grid_search
+```
+
 ## Library, REPL, and review surfaces
 
 The same extraction is packaged so the dashboard, merge lab, REPL, and
@@ -247,8 +262,15 @@ reference/
   research/research_extension.md      broader research framing
   research/programmatic_vs_contextual_merges.md
   process/layer_normalization_analysis.md
+  process/topology_coupling_experiment.md  joined/coupled mode methodology + grid search results
+  process/grid_search/                grid_search_results.csv + grid_search_pareto.svg
   experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md
   experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md
+
+scripts/
+  grid_search.py                      snap x joint sweep ranked by HATCH-IoU + coverage
+  verify_dashboards.py                optional: screenshot-verify the review dashboards
+  verify_regions.py                   optional: screenshot-verify region renders
 
 out/                                  default generated bundle (SVGs + JSON + report)
 ```

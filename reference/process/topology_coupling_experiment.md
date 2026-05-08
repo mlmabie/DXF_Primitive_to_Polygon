@@ -88,13 +88,34 @@ Using `ezdxf` as an audit lens found these scoped entities in modelspace:
 - `ARC`: 663
 - `3DFACE`: 151
 - `CIRCLE`: 77
+- `POINT`: 40
 - `INSERT`: 28
+- `POLYLINE`: 2
 
-The scoped `INSERT`s are mostly on `A-GLAZING FULL`, with a few on external wall
-and external glass layers. They reference small line/polyline blocks. A library
-branch would be useful for robust block transforms and DXF edge cases, but it
-would not replace the topology decision: even with `ezdxf`, the solver still has
-to decide which primitive graph couplings produce valid architectural polygons.
+`tokenize_dxf.iter_entities` reads 36,827 / 36,827 of these by instance count
+— **100% of scoped entity instances** ezdxf surfaces. The categorical gap is
+not what we miss but what we *do* with what we read:
+
+- **`INSERT` explosion** is not implemented. The 28 scoped INSERTs are
+  counted but contribute zero geometry; they reference 27 auto-named blocks
+  (mostly `LINE`+`LWPOLYLINE` glazing detail, a few `ELLIPSE`-only) plus one
+  `A-EXTERNAL GLASS` block. Resolving them through `ezdxf.virtual_entities`
+  would add roughly the equivalent of one extra LINE per per-instance segment
+  multiplied by 28 — small on this file, more meaningful on block-heavy
+  drafting.
+- **Bulge arc-reconstruction** is approximated as straight chords. 21 / 3,343
+  scoped LWPOLYLINEs carry non-zero bulge; on this file the curvature loss is
+  cosmetic, but a curved-wall-heavy file would degrade noticeably.
+- **`SPLINE`** is unread. 70 splines exist in modelspace but zero are on
+  scoped layers in this file, so the gap is hypothetical here.
+- **OCS / arbitrary-axis transforms** are not applied. The scoped layers use
+  the world coordinate system, so this is harmless for this file.
+
+Net practical gap on this file: a few hundred additional primitives at most,
+none on a critical recovery path. Switching the parser to `ezdxf` is out of
+scope for this submission — the stdlib parser is the audit-readable
+deliverable — but ezdxf remains the natural lens when the second test file
+exposes block-heavy or spline-heavy drafting.
 
 ## Read
 
@@ -103,26 +124,60 @@ gain is real, but the joined/coupled runs are ~3x slower and the new polygons
 need closer visual review at local zoom before either should replace the current
 submission default.
 
-## What Would Make A Real Grid Search
+## Grid Search
 
 The source-entity coverage proxy is a length signal, not a shape signal. It
 cannot tell us whether `joined` produces *better* polygons or just *more*
-length-coverage. Two stronger objectives are visible from the file itself:
+length-coverage. The natural shape-correctness signal hides in the file
+itself: HATCH companion layers (`A-EXTERNAL WALL HATCH`, `S-COLUMN HATCH`)
+describe the same physical elements as their outline twins with independent
+carriers. Scoring graph-recovered polygons by IoU against HATCH boundaries on
+matched companion layers gives a self-supervised correctness signal that the
+coverage proxy structurally cannot.
 
-- **HATCH-IoU as hidden ground truth.** HATCH companion layers
-  (`A-EXTERNAL WALL HATCH`, `S-COLUMN HATCH`, ...) describe the same physical
-  elements as their outline twins, with independent carriers. Scoring
-  graph-recovered polygons by IoU against the HATCH boundary on the matched
-  companion layer gives a self-supervised correctness signal that the coverage
-  proxy structurally cannot. The 1934 HATCH primitives in this file would back
-  several hundred IoU comparisons per family.
-- **Topology validity.** Self-intersection check (currently we only enforce
-  closed + clockwise + ≥3 unique vertices), aspect-ratio sanity per family,
-  rejection on unrealistic count blowups.
+[`scripts/grid_search.py`](../../scripts/grid_search.py) implements this:
 
-A composite score of `0.5 * HATCH_IoU + 0.3 * coverage + 0.2 * merge_label_acc`
-with hard rejections for invalid polygons is the natural grid-search objective.
-Axes worth sweeping: snap ∈ {0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 1.0} × joint ∈
-{0, 0.01, 0.025, 0.05, 0.1}. Per-family snap is a stretch axis worth running
-once if the global search hits a ceiling. Going beyond that wants the DWG pair
-of this file or a second labelled DXF.
+- Composite score `0.6 * HATCH_IoU + 0.4 * coverage_proxy`, where HATCH-IoU
+  is `mean_iou_on_match * match_rate` so the score penalises both bad shape
+  and missed companions.
+- Hard reject on invalid polygons or any family exceeding 3× the
+  conservative-baseline count (loosened from 2× after the joined-mode 825
+  curtain walls — 2.7× — proved to be real T-junction-derived panels).
+- Curtain walls have no HATCH companions on this file, so the IoU score
+  excludes that family; coverage still applies to all three.
+
+Axes: snap ∈ {0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 1.0} × joint ∈ {0, 0.01,
+0.025, 0.05, 0.1}. 35 runs, ~3 minutes wall-clock. Outputs in
+[`grid_search/`](grid_search/): `grid_search_results.csv` (full table) and
+`grid_search_pareto.svg` (coverage vs HATCH-IoU scatter, Pareto-front
+highlighted).
+
+### What the grid actually showed
+
+Three findings, ordered by importance:
+
+1. **Coupling is the load-bearing change, not snap selection.** Every
+   joint=0 run scores ~0.50; every joint>0 run scores ~0.57. The 14% jump
+   is the coupling pass, not the snap value.
+2. **Snap is robust across `[0.25, 0.75]` once joints are explicit.** With
+   any joint ≥ 0.01, score variance across that snap range is under 1%.
+   This is the failure-mode prediction earlier in this doc made concrete:
+   when snap is no longer doing two jobs, its exact value stops mattering
+   over a wide window.
+3. **`joined` and `coupled` both sit on the Pareto front.** Best by
+   composite is `snap=0.6, joint=0.05` at score 0.575, ahead of `joined`
+   (0.570) and `coupled` (0.572) by ≤1%. That's not enough to justify
+   renaming the preset; it confirms the chosen modes are defensible
+   rather than picked at the bottom of a ridge.
+
+The grid does not change the submission default. It validates that the
+default is reasonable, the joined/coupled modes are well-positioned, and
+parameter sweeps from here have visible structure to optimise against.
+
+### Stretch axes (not run)
+
+Per-family snap (`{walls × columns × curtain_walls}`) multiplies cost by
+~50× and would test whether the families want different snap values. Worth
+running once if a future pass hits a ceiling. Going beyond internal
+validation wants either a labelled second DXF or the DWG pair of this
+file as external ground truth.
