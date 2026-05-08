@@ -15,12 +15,29 @@ from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Sequence, 
 Point = Tuple[float, float]
 
 
-# The flagless/default run uses conservative=0.5 and matches the checked-in
-# out/ bundle. The liberal preset and --snap-tolerance forms are retained for
-# audit/debug sweeps, not as alternate submission outputs.
+# The flagless/default run uses conservative=0.5 with no T-junction coupling
+# and matches the checked-in out/ bundle. The other presets are sweeps:
+#   liberal  -- wider snap, recovers a few more candidates with mild over-merging
+#   joined   -- default snap + light T-junction coupling; targets the "wrong
+#               polygon shape from a missed T-junction" failure without
+#               changing gap-closure behaviour
+#   coupled  -- tighter snap + T-junction coupling; maximally aggressive
+# Both joined and coupled add ~3-4s of runtime versus conservative. See
+# reference/process/topology_coupling_experiment.md for ablations.
+# --snap-tolerance and --joint-tolerance override the corresponding mode value.
 SNAP_TOLERANCE_MODES: Dict[str, float] = {
     "conservative": 0.5,
     "liberal": 0.75,
+    "joined": 0.5,
+    "coupled": 0.25,
+}
+
+# Joint tolerance per mode. 0.0 disables T-junction coupling entirely.
+MODE_JOINT_TOLERANCES: Dict[str, float] = {
+    "conservative": 0.0,
+    "liberal": 0.0,
+    "joined": 0.025,
+    "coupled": 0.025,
 }
 
 
@@ -154,6 +171,7 @@ class Entity:
     ratio: Optional[float] = None
     start_param: Optional[float] = None
     end_param: Optional[float] = None
+    face_points: List[Point] = field(default_factory=list)
     hatch_paths: List[HatchBoundaryPath] = field(default_factory=list)
 
 
@@ -164,6 +182,14 @@ class Segment:
     entity_id: str
     start: Point
     end: Point
+
+
+@dataclass
+class CouplingStats:
+    input_segments: int
+    output_segments: int
+    split_segments: int
+    inserted_joints: int
 
 
 @dataclass
@@ -339,6 +365,26 @@ def finalize_entity(entity_id: str, entity_type: str, tags: Sequence[Tuple[int, 
                 break
         entity.points = parse_lwpolyline_points(tags)
         entity.closed = bool(flags & 1) or polyline_is_closed([(x, y) for x, y, _ in entity.points])
+
+    elif entity_type == "3DFACE":
+        coordinates: Dict[int, List[Optional[float]]] = {
+            0: [None, None],
+            1: [None, None],
+            2: [None, None],
+            3: [None, None],
+        }
+        for code, raw in tags:
+            if 10 <= code <= 13:
+                coordinates[code - 10][0] = parse_float(raw)
+            elif 20 <= code <= 23:
+                coordinates[code - 20][1] = parse_float(raw)
+        points = [
+            (coord[0], coord[1])
+            for coord in coordinates.values()
+            if coord[0] is not None and coord[1] is not None
+        ]
+        entity.face_points = dedupe_consecutive(points)
+        entity.closed = len(entity.face_points) >= 3
 
     elif entity_type == "HATCH":
         entity.hatch_paths = parse_hatch_boundary_paths(tags)
@@ -980,6 +1026,8 @@ def entity_to_draw_paths(entity: Entity) -> List[List[Point]]:
         return [points] if points else []
     if entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.points:
         return [flatten_polyline_points(entity.points, entity.closed)]
+    if entity.type == "3DFACE" and entity.face_points:
+        return [close_ring(entity.face_points)]
     if entity.type == "HATCH" and entity.hatch_paths:
         if entity.family is None:
             return [path.points for path in entity.hatch_paths if path.points]
@@ -1053,6 +1101,8 @@ def extract_direct_polygons(entities: Sequence[Entity]) -> List[PolygonRecord]:
             ring = close_ring(ring)
         elif entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.points and entity.closed:
             ring = close_ring(flatten_polyline_points(entity.points, closed=True))
+        elif entity.type == "3DFACE" and entity.face_points:
+            ring = close_ring(entity.face_points)
         else:
             continue
         record = polygon_record(
@@ -1096,6 +1146,8 @@ def entity_to_segments(entity: Entity) -> List[Segment]:
         return []
     if entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.closed:
         return []
+    if entity.type == "3DFACE":
+        return []
 
     paths = entity_to_draw_paths(entity)
     segments: List[Segment] = []
@@ -1119,6 +1171,107 @@ def entity_to_segments(entity: Entity) -> List[Segment]:
 
 def snap_point(point: Point, tolerance: float) -> Point:
     return (round(point[0] / tolerance) * tolerance, round(point[1] / tolerance) * tolerance)
+
+
+def segment_projection_fraction(point: Point, start: Point, end: Point) -> Tuple[float, Point, float]:
+    dx = end[0] - start[0]
+    dy = end[1] - start[1]
+    length_sq = dx * dx + dy * dy
+    if length_sq <= 1e-12:
+        return 0.0, start, distance(point, start)
+    t = ((point[0] - start[0]) * dx + (point[1] - start[1]) * dy) / length_sq
+    t = max(0.0, min(1.0, t))
+    projected = (start[0] + t * dx, start[1] + t * dy)
+    return t, projected, distance(point, projected)
+
+
+def couple_segments_at_endpoint_joints(
+    segments: Sequence[Segment],
+    tolerance: float,
+    cell_size: Optional[float] = None,
+) -> Tuple[List[Segment], CouplingStats]:
+    """Split segments where scoped endpoints land on another segment interior.
+
+    The graph face walk only sees vertices at segment endpoints after snapping.
+    Drafted T-junctions often encode one stroke ending on the middle of another
+    stroke; this makes the visual boundary real but topologically invisible.
+    This pass inserts those coupling points before snapping, allowing smaller
+    snap tolerances to recover faces without forcing unrelated endpoints
+    together.
+    """
+    if tolerance <= 0.0:
+        return list(segments), CouplingStats(len(segments), len(segments), 0, 0)
+
+    by_family: Dict[str, List[Segment]] = defaultdict(list)
+    for segment in segments:
+        by_family[segment.family].append(segment)
+
+    grid_size = cell_size if cell_size is not None else max(tolerance * 8.0, 4.0)
+    coupled: List[Segment] = []
+    split_segments = 0
+    inserted_joints = 0
+
+    for family, family_segments in by_family.items():
+        endpoint_segments: Dict[Point, set[int]] = defaultdict(set)
+        for index, segment in enumerate(family_segments):
+            for point in (segment.start, segment.end):
+                endpoint_segments[point].add(index)
+
+        endpoints_by_cell: Dict[Tuple[int, int], List[Point]] = defaultdict(list)
+        for point in endpoint_segments:
+            cell = (math.floor(point[0] / grid_size), math.floor(point[1] / grid_size))
+            endpoints_by_cell[cell].append(point)
+
+        for segment_index, segment in enumerate(family_segments):
+            min_x = min(segment.start[0], segment.end[0]) - tolerance
+            max_x = max(segment.start[0], segment.end[0]) + tolerance
+            min_y = min(segment.start[1], segment.end[1]) - tolerance
+            max_y = max(segment.start[1], segment.end[1]) + tolerance
+            ix0 = math.floor(min_x / grid_size)
+            ix1 = math.floor(max_x / grid_size)
+            iy0 = math.floor(min_y / grid_size)
+            iy1 = math.floor(max_y / grid_size)
+
+            split_points: List[Tuple[float, Point]] = [(0.0, segment.start), (1.0, segment.end)]
+            for ix in range(ix0, ix1 + 1):
+                for iy in range(iy0, iy1 + 1):
+                    for endpoint in endpoints_by_cell.get((ix, iy), []):
+                        if segment_index in endpoint_segments[endpoint]:
+                            continue
+                        t, projected, gap = segment_projection_fraction(endpoint, segment.start, segment.end)
+                        if t <= 1e-5 or t >= 1.0 - 1e-5 or gap > tolerance:
+                            continue
+                        split_points.append((t, projected))
+
+            split_points.sort(key=lambda item: item[0])
+            deduped: List[Tuple[float, Point]] = []
+            for t, point in split_points:
+                if deduped and abs(t - deduped[-1][0]) <= 1e-5:
+                    continue
+                deduped.append((t, point))
+
+            if len(deduped) > 2:
+                split_segments += 1
+                inserted_joints += len(deduped) - 2
+            for (_, start), (_, end) in zip(deduped, deduped[1:]):
+                if distance(start, end) <= 1e-6:
+                    continue
+                coupled.append(
+                    Segment(
+                        family=segment.family,
+                        layer=segment.layer,
+                        entity_id=segment.entity_id,
+                        start=start,
+                        end=end,
+                    )
+                )
+
+    return coupled, CouplingStats(
+        input_segments=len(segments),
+        output_segments=len(coupled),
+        split_segments=split_segments,
+        inserted_joints=inserted_joints,
+    )
 
 
 SnapTolerance = Union[float, Mapping[str, float]]
@@ -1318,6 +1471,9 @@ def entity_length(entity: Entity) -> float:
     if entity.type in {"LWPOLYLINE", "POLYLINE"} and entity.points:
         flat = flatten_polyline_points(entity.points, entity.closed)
         return sum(distance(flat[index], flat[index + 1]) for index in range(len(flat) - 1))
+    if entity.type == "3DFACE" and entity.face_points:
+        ring = close_ring(entity.face_points)
+        return sum(distance(ring[index], ring[index + 1]) for index in range(len(ring) - 1))
     if entity.type == "HATCH" and entity.hatch_paths:
         return sum(
             distance(path[index], path[index + 1])
@@ -1594,6 +1750,7 @@ def build_analysis_summary(
     polygons: Sequence[PolygonRecord],
     runtime_seconds: float,
     snap_stats: Dict[str, Dict[str, int]],
+    coupling_stats: Optional[CouplingStats] = None,
 ) -> Dict[str, object]:
     type_counts = Counter(entity.type for entity in entities)
     layer_counts = Counter(entity.layer for entity in entities)
@@ -1622,6 +1779,12 @@ def build_analysis_summary(
         },
         "source_kind_counts": dict(Counter(polygon.source_kind for polygon in polygons).most_common()),
         "hatch_extraction": hatch_extraction_stats(entities, polygons),
+        "graph_coupling": {
+            "input_segments": coupling_stats.input_segments if coupling_stats else 0,
+            "output_segments": coupling_stats.output_segments if coupling_stats else 0,
+            "split_segments": coupling_stats.split_segments if coupling_stats else 0,
+            "inserted_joints": coupling_stats.inserted_joints if coupling_stats else 0,
+        },
         "target_primitive_totals": {
             "count": len(target_entities),
             "length_total": round(total_target_length, 3),
@@ -1679,6 +1842,7 @@ def write_analysis_report(path: Path, summary: Dict[str, object]) -> None:
     target_totals = summary["target_primitive_totals"]
     wall_snap_stats = summary["wall_snap_stats"]
     hatch_stats = summary["hatch_extraction"]
+    coupling_stats = summary.get("graph_coupling", {})
     lines = [
         "# DXF Analysis Report",
         "",
@@ -1696,6 +1860,7 @@ def write_analysis_report(path: Path, summary: Dict[str, object]) -> None:
         f"- Columns extracted: `{polygon_counts['columns']}`",
         f"- Curtain walls extracted: `{polygon_counts['curtain_walls']}`",
         f"- Direct HATCH polygons extracted: `{hatch_stats['direct_hatch_polygons']}` from `{hatch_stats['outer_candidate_paths']}` outer/external HATCH paths; `{hatch_stats['skipped_hole_or_default_paths']}` non-outer paths skipped as hole/default candidates.",
+        f"- Graph coupling inserted `{coupling_stats.get('inserted_joints', 0)}` endpoint-on-segment joints and split `{coupling_stats.get('split_segments', 0)}` source segments before face extraction.",
         "",
         "## Connectivity Callouts",
         "",
@@ -1768,10 +1933,17 @@ def main() -> None:
         choices=sorted(SNAP_TOLERANCE_MODES),
         default="conservative",
         help=(
-            "Named extraction preset. conservative=0.5 (submission/audit "
-            "default, matches checked-in out/), liberal=0.75 (slightly "
-            "wider snap, recovers a few more candidates with mild "
-            "over-merging). --snap-tolerance overrides --mode when given."
+            "Named extraction preset. conservative=snap 0.5, no coupling "
+            "(submission/audit default, matches checked-in out/); "
+            "liberal=snap 0.75, no coupling (slightly wider snap, mild "
+            "over-merging); joined=snap 0.5 with T-junction coupling at "
+            "0.025 (default gap-closure plus T-junction handling; targets "
+            "wrong-shape polygons from missed junctions); "
+            "coupled=snap 0.25 with T-junction coupling at 0.025 "
+            "(maximally aggressive). See "
+            "reference/process/topology_coupling_experiment.md for the "
+            "joined/coupled ablation. "
+            "--snap-tolerance and --joint-tolerance override the mode value."
         ),
     )
     parser.add_argument(
@@ -1786,8 +1958,24 @@ def main() -> None:
         ),
     )
     parser.add_argument("--normalization", type=Path, default=None, help="Path to normalization.json (overrides hardcoded maps).")
+    parser.add_argument(
+        "--joint-tolerance",
+        type=float,
+        default=None,
+        help=(
+            "Graph preprocessing: split segments where another scoped "
+            "endpoint lands on the segment interior within this distance. "
+            "Defaults to the value supplied by --mode (0.0 for conservative/"
+            "liberal, 0.025 for coupled). Pass an explicit value to override."
+        ),
+    )
     args = parser.parse_args()
     effective_snap_tolerance = args.snap_tolerance if args.snap_tolerance is not None else SNAP_TOLERANCE_MODES[args.mode]
+    effective_joint_tolerance = (
+        args.joint_tolerance
+        if args.joint_tolerance is not None
+        else MODE_JOINT_TOLERANCES.get(args.mode, 0.0)
+    )
 
     # Load normalization output if provided — makes it the source of truth for maps
     norm = load_normalization(args.normalization)
@@ -1815,7 +2003,11 @@ def main() -> None:
     direct_polygons = extract_direct_polygons(entities)
     hatch_polygons = extract_hatch_polygons(entities)
     graph_segments = [segment for entity in entities for segment in entity_to_segments(entity)]
-    graph_polygons = extract_faces_from_segments(graph_segments, tolerance=snap_tolerance)
+    graph_segments_for_faces, coupling_stats = couple_segments_at_endpoint_joints(
+        graph_segments,
+        tolerance=effective_joint_tolerance,
+    )
+    graph_polygons = extract_faces_from_segments(graph_segments_for_faces, tolerance=snap_tolerance)
     polygons = dedupe_polygons(direct_polygons + hatch_polygons + graph_polygons)
     runtime_seconds = time.time() - start_time
 
@@ -1824,11 +2016,13 @@ def main() -> None:
         polygons=polygons,
         runtime_seconds=runtime_seconds,
         snap_stats=compute_snap_stats(entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]),
+        coupling_stats=coupling_stats,
     )
     summary["mode"] = args.mode if args.snap_tolerance is None else "custom"
     summary["snap_tolerance"] = (
         dict(snap_tolerance) if isinstance(snap_tolerance, Mapping) else snap_tolerance
     )
+    summary["joint_tolerance"] = effective_joint_tolerance
     output_json = build_output_json(polygons, entities, runtime_seconds)
 
     (output_dir / "tokenization_output.json").write_text(json.dumps(output_json, indent=2), encoding="utf-8")

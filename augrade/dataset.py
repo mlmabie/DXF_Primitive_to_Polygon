@@ -83,6 +83,7 @@ def build(
         snap_stats=td.compute_snap_stats(
             entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]
         ),
+        coupling_stats=extraction.coupling_stats,
     )
     runtime_seconds = time.time() - start
 

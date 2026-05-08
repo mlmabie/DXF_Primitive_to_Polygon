@@ -1,5 +1,5 @@
 {
-  "runtime_seconds": 2.71315598487854,
+  "runtime_seconds": 1.6910641193389893,
   "entity_type_counts": {
     "LINE": 58128,
     "LWPOLYLINE": 3408,
@@ -179,12 +179,12 @@
     }
   },
   "polygon_counts": {
-    "walls": 1158,
+    "walls": 1169,
     "columns": 764,
     "curtain_walls": 304
   },
   "graph_vs_direct_counts": {
-    "direct": 1790,
+    "direct": 1801,
     "graph_face": 436
   },
   "source_kind_counts": {
@@ -192,6 +192,7 @@
     "graph_face": 436,
     "direct_lwpolyline": 294,
     "direct_circle": 35,
+    "direct_3dface": 11,
     "direct_ellipse": 8
   },
   "hatch_extraction": {
@@ -201,12 +202,18 @@
     "skipped_hole_or_default_paths": 56,
     "direct_hatch_polygons": 1453
   },
+  "graph_coupling": {
+    "input_segments": 54975,
+    "output_segments": 54975,
+    "split_segments": 0,
+    "inserted_joints": 0
+  },
   "target_primitive_totals": {
     "count": 36827,
-    "length_total": 1967355.755,
-    "count_consumed": 4473,
-    "length_consumed": 1010862.297,
-    "length_coverage_estimate": 0.5138,
+    "length_total": 1977595.348,
+    "count_consumed": 4492,
+    "length_consumed": 1014105.526,
+    "length_coverage_estimate": 0.5128,
     "coverage_method": "source_entity_length_proxy",
     "coverage_note": "Proxy metric: sums drawable length of scoped source entities referenced by accepted polygons. It is not the brief's exact inside-or-near-output-polygon coverage calculation."
   },
@@ -241,5 +248,6 @@
     }
   },
   "mode": "conservative",
-  "snap_tolerance": 0.5
+  "snap_tolerance": 0.5,
+  "joint_tolerance": 0.0
 }

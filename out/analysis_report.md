@@ -2,18 +2,19 @@
 
 ## Raw File Organization
 
-- Runtime for parse + extraction: `2.71s`
+- Runtime for parse + extraction: `1.69s`
 - Primitive types are dominated by `LINE` with `58128` entities, followed by `LWPOLYLINE`, `ELLIPSE`, `HATCH`, and `ARC`.
-- Scoped target primitives total `36827` entities with an estimated drawable length of `1967355.755` units.
-- Source-entity coverage proxy is `1010862.297` units, or `51.4%` of scoped drawable length.
+- Scoped target primitives total `36827` entities with an estimated drawable length of `1977595.348` units.
+- Source-entity coverage proxy is `1014105.526` units, or `51.3%` of scoped drawable length.
 - Coverage caveat: this is a source-entity-length proxy, not the grader's exact primitive-length-inside-output-polygons metric.
 
 ## Target Family Counts
 
-- Walls extracted: `1158`
+- Walls extracted: `1169`
 - Columns extracted: `764`
 - Curtain walls extracted: `304`
 - Direct HATCH polygons extracted: `1453` from `2222` outer/external HATCH paths; `56` non-outer paths skipped as hole/default candidates.
+- Graph coupling inserted `0` endpoint-on-segment joints and split `0` source segments before face extraction.
 
 ## Connectivity Callouts
 

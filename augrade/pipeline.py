@@ -13,8 +13,8 @@ from . import provenance as pu
 from .extract import run_extraction
 
 
-def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance) -> dict:
-    extraction = run_extraction(input_dxf, snap_tolerance)
+def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance, joint_tolerance: float = 0.0) -> dict:
+    extraction = run_extraction(input_dxf, snap_tolerance, joint_tolerance=joint_tolerance)
     entities = extraction.entities
     polygons = extraction.polygons
     graph_segments = extraction.graph_segments
@@ -25,6 +25,7 @@ def write_tokenization_bundle(input_dxf: Path, output_dir: Path, snap_tolerance)
         polygons=polygons,
         runtime_seconds=extraction.runtime_seconds,
         snap_stats=td.compute_snap_stats(entities, wall_tolerances=[0.1, 0.25, 0.5, 1.0]),
+        coupling_stats=extraction.coupling_stats,
     )
     summary["snap_tolerance"] = (
         dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
@@ -90,7 +91,12 @@ def main() -> None:
         "--mode",
         choices=sorted(td.SNAP_TOLERANCE_MODES),
         default="conservative",
-        help="Named extraction preset. conservative=0.5, liberal=0.75. Overridden by --snap-tolerance.",
+        help=(
+            "Named extraction preset. conservative=snap 0.5, no coupling; "
+            "liberal=snap 0.75, no coupling; joined=snap 0.5 + joint 0.025; "
+            "coupled=snap 0.25 + joint 0.025. "
+            "--snap-tolerance and --joint-tolerance override the mode value."
+        ),
     )
     parser.add_argument(
         "--snap-tolerance",
@@ -99,6 +105,16 @@ def main() -> None:
         help=(
             "Advanced override: scalar, per-family map "
             "('walls=0.5,columns=0.25,curtain_walls=0.35'), or 'adaptive'."
+        ),
+    )
+    parser.add_argument(
+        "--joint-tolerance",
+        type=float,
+        default=None,
+        help=(
+            "Endpoint-on-segment coupling tolerance. Defaults to the value "
+            "supplied by --mode (0.0 for conservative/liberal, 0.025 for "
+            "joined/coupled). Pass an explicit value to override."
         ),
     )
     args = parser.parse_args()
@@ -114,10 +130,20 @@ def main() -> None:
     else:
         snap_tolerance = td.SNAP_TOLERANCE_MODES[args.mode]
         mode_label = args.mode
+    effective_joint_tolerance = (
+        args.joint_tolerance
+        if args.joint_tolerance is not None
+        else td.MODE_JOINT_TOLERANCES.get(args.mode, 0.0)
+    )
     scalar_snap = td.snap_tolerance_for_report(snap_tolerance)
     suffix = format(scalar_snap, "g").replace(".", "_")
 
-    token_summary = write_tokenization_bundle(args.input_dxf, args.output_dir, snap_tolerance)
+    token_summary = write_tokenization_bundle(
+        args.input_dxf,
+        args.output_dir,
+        snap_tolerance,
+        joint_tolerance=effective_joint_tolerance,
+    )
     extraction = token_summary["extraction"]
     build_dashboard.build_dashboard(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
     write_merge_lab_bundle(args.input_dxf, args.output_dir, scalar_snap, extraction=extraction)
@@ -128,6 +154,7 @@ def main() -> None:
         "snap_tolerance": (
             dict(snap_tolerance) if isinstance(snap_tolerance, dict) else snap_tolerance
         ),
+        "joint_tolerance": effective_joint_tolerance,
         "scalar_snap_tolerance": scalar_snap,
         "polygon_counts": token_summary["polygon_counts"],
         "provenance_summary": token_summary["provenance"],

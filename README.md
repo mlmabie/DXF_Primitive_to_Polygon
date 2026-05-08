@@ -33,7 +33,7 @@ The result on the supplied file:
 
 | walls | columns | curtain walls | coverage |
 | --- | --- | --- | --- |
-| 1158 | 764 | 304 | 51.4% |
+| 1169 | 764 | 304 | 51.3% |
 
 Coverage is reported as a source-entity-length proxy; it is not the
 grader's exact primitive-inside-polygon coverage calculation.
@@ -86,15 +86,37 @@ are documented as future work, not part of the current solver.
 
 ## Parameter Notes
 
-The default result uses snap tolerance `0.5`. After
-HATCH extraction, snap tolerance mainly affects graph-face recovery
-around the direct carriers. More aggressive tolerances can add or
-reshuffle graph faces, but the coverage gain is marginal compared with
-the higher merge risk.
+The default result uses snap tolerance `0.5` with no T-junction coupling
+and matches the checked-in `out/` bundle. After HATCH extraction, snap
+tolerance mainly affects graph-face recovery around the direct carriers.
+More aggressive tolerances can add or reshuffle graph faces, but the
+coverage gain alone is marginal compared with the higher merge risk.
 
-### Advanced override: `--snap-tolerance`
+### `--mode` presets
 
-For experiments, `--snap-tolerance` overrides `--mode` and accepts:
+| mode | snap | joint | use |
+| --- | --- | --- | --- |
+| `conservative` (default) | 0.5 | off | submission/audit baseline; matches checked-in `out/` |
+| `liberal` | 0.75 | off | wider snap; mild over-merging on a few candidates |
+| `joined` | 0.5 | 0.025 | default snap with explicit T-junction coupling; targets wrong-shape polygons from missed junctions without changing gap-closure |
+| `coupled` | 0.25 | 0.025 | tighter snap + T-junction coupling; maximally aggressive |
+
+T-junction coupling decouples the two jobs snap tolerance was doing —
+closing drafting gaps versus creating topological vertices at T-junctions
+— by running an explicit segment-splitting pass before the face walk.
+`joined` keeps the default snap and adds only the coupling pass; on the
+supplied file it produces `1610` walls, `782` columns, and `825` curtain
+walls at `71.3%` source-entity coverage proxy. `coupled` additionally
+tightens snap to 0.25 (`1590 / 784 / 729 @ 69.4%`); on this file the
+tighter snap fragments more legitimate corners than it recovers, so
+`joined` actually scores higher. Full writeup with methodology and
+ablations:
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
+
+### Advanced override: `--snap-tolerance` and `--joint-tolerance`
+
+For experiments, `--snap-tolerance` and `--joint-tolerance` override the
+corresponding mode value. `--snap-tolerance` accepts:
 
 ```bash
 # scalar, uniform across all families
@@ -109,7 +131,24 @@ For experiments, `--snap-tolerance` overrides `--mode` and accepts:
 
 The adaptive mode chooses from `[0.1, 0.25, 0.5, 1.0]` using a simple
 wall-connectivity score; on this file it returns `0.5`, matching the
-default. This is an advanced surface, not the default path.
+default. `--joint-tolerance` accepts a scalar (0 disables T-junction
+coupling); use it to dial the coupling threshold independently of `--mode`.
+These are advanced surfaces, not the default path.
+
+### Grid search
+
+[`scripts/grid_search.py`](scripts/grid_search.py) sweeps `snap × joint`
+ranked by HATCH-IoU + coverage. Outputs a results CSV and a Pareto-front
+SVG. Empirical findings are written up in
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md);
+the headline is that coupling (joint > 0) is the load-bearing change and
+snap is robust across `[0.25, 0.75]` once joints are explicit. `joined`
+and `coupled` both sit on the Pareto front.
+
+```bash
+# 35 combinations, ~3 minutes
+python3 scripts/grid_search.py "Airport Doors_MEZZ.dxf" reference/process/grid_search
+```
 
 ## Library, REPL, and review surfaces
 
@@ -145,7 +184,7 @@ QA helpers and require Playwright.
 The file is not geometry plus random noise. It is authored variation
 over a stable object structure: layer-schema differences, carrier
 differences (`LINE` vs `LWPOLYLINE` vs `HATCH` vs `CIRCLE`),
-decomposition differences, drafting-zone differences. Three concrete
+decomposition differences, drafting-zone differences. Four concrete
 findings fed back into the solver's defaults:
 
 1. **Cross-layer pooling is real.** `A-GLAZING MULLION` (`LINE`-only)
@@ -161,6 +200,17 @@ findings fed back into the solver's defaults:
 
 3. **Snap tolerance has a validated default.** The wall-family
    connectivity sweep selects 0.5, which is the default.
+
+4. **HATCH companion layers are hidden ground truth.** Fill-vs-outline
+   pairs like `A-EXTERNAL WALL` / `A-EXTERNAL WALL HATCH` (and the
+   `S-COLUMN` / `S-COLUMN HATCH` pair) describe the same physical
+   element with two independent carrier types. A graph-recovered
+   polygon's IoU against the HATCH boundary on the companion layer is
+   a self-supervised correctness signal — it captures *shape* correctness,
+   which the source-entity coverage proxy misses by construction. Absent
+   the DWG pair or a second labelled DXF, this is the strongest internal
+   validation signal available, and it is what a parameter grid search
+   should optimise against rather than coverage alone.
 
 The principle tying these together is **"pool for geometry, tag for
 provenance"** — use layer variants and carrier choices together for
@@ -212,8 +262,15 @@ reference/
   research/research_extension.md      broader research framing
   research/programmatic_vs_contextual_merges.md
   process/layer_normalization_analysis.md
+  process/topology_coupling_experiment.md  joined/coupled mode methodology + grid search results
+  process/grid_search/                grid_search_results.csv + grid_search_pareto.svg
   experiments/INDEPENDENT_LATENT_DIMENSIONS_MEMO.md
   experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md
+
+scripts/
+  grid_search.py                      snap x joint sweep ranked by HATCH-IoU + coverage
+  verify_dashboards.py                optional: screenshot-verify the review dashboards
+  verify_regions.py                   optional: screenshot-verify region renders
 
 out/                                  default generated bundle (SVGs + JSON + report)
 ```

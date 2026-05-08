@@ -85,6 +85,25 @@ This is the geometric analogue of tokenizer composition: characters become token
 5. Exact overlap-based coverage scoring instead of the current source-entity proxy.
 6. Learned tolerance and family disambiguation over ambiguous local regions.
 
+An in-flight extension of #1/#3 is the explicit T-junction coupling pass
+behind `--mode joined` and `--mode coupled`, which separates gap-closure
+from topological-vertex creation. On the supplied file `joined` (default
+snap + coupling) lifts the source-entity coverage proxy from 51.3% to
+71.3% at ~3s extra runtime, and `coupled` (tighter snap + coupling) hits
+69.4% — `joined` actually scores higher because dropping snap to 0.25
+fragments more legitimate corners than it recovers once joints are
+explicit. Both remain opt-in pending visual review at local zoom.
+Methodology in
+[`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md).
+
+Going further with parameter sweeps is gated on a stronger objective
+than the source-entity coverage proxy. The natural internal signal is
+HATCH-boundary IoU against graph-recovered polygons on companion layers
+(see README "What the analysis found" #4); the natural external signal
+would be the DWG pair of this file or a second labelled DXF. A grid
+search over `(snap, joint)` ranked by a composite of HATCH-IoU + coverage
++ topology-validity is the next concrete step.
+
 ## Research Direction
 
 The implementation is intentionally a deterministic geometry layer:
