@@ -9,7 +9,7 @@ updates, slide edits, companion docs, source leads, implementation sketches, and
 counterfactuals into a falsifiable workbench. The breadth is intentional: it
 creates a map of the problem, the candidate mechanisms, and the failure modes.
 
-Breadth is not ownership. Ownership comes from pointed source reads,
+Ownership comes from pointed source reads,
 counterfactual baselines, small reproductions, and claim-status tracking.
 
 The goal of this file is to prevent four failure modes:
