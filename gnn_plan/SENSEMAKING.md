@@ -145,12 +145,13 @@ Avoid:
 
 Read in this order:
 
-1. `prompt.md` — current objective
-2. `TALK_TRACK.md` — what to say
-3. `SYSTEM_SPEC.md` — what to build
-4. `SENSEMAKING.md` — why this shape matters
-5. `06_example_insights.md` — what the first received examples changed
-6. `04_research_map.md` — evidence shelf
+1. `00_START_HERE.md` — project prompt, reader contract, KISS path
+2. `REVIEW_AND_PIVOT.md` — external review and HATCH-IoU narrowing
+3. `TALK_TRACK.md` — what to say
+4. `SYSTEM_SPEC.md` — what to build
+5. `SENSEMAKING.md` — why this shape matters
+6. `06_example_insights.md` — what the first received examples changed
+7. `04_research_map.md` — evidence shelf
 
 The older generated notes were consolidated here. The deeper DXF thesis and
 paper trail under `reference/` should remain for now.

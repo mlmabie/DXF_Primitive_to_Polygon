@@ -11,10 +11,23 @@ folder is a workbench for making that plan executable and falsifiable.
 
 For portable handoff artifacts, see:
 
-- [`artifacts/Augrade GNN Strategy.pdf`](artifacts/Augrade%20GNN%20Strategy.pdf)
-- [`artifacts/Augrade GNN Strategy v2.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2.pptx)
-- [`artifacts/Augrade Operating Doctrine Companion v2.docx`](artifacts/Augrade%20Operating%20Doctrine%20Companion%20v2.docx)
-- [`artifacts/Augrade Paper Trajectory Supplement v2.docx`](artifacts/Augrade%20Paper%20Trajectory%20Supplement%20v2.docx)
+- [`artifacts/Augrade GNN Strategy v2 - Presenter.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Presenter.pptx) — 9 slides, low-density presenter deck (default for live discussion)
+- [`artifacts/Augrade GNN Strategy v2 - Technical.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Technical.pptx) — 13 slides, mechanism stack and curriculum (deeper reference)
+- [`artifacts/Augrade GNN Strategy v2 - Doctrine.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Doctrine.pptx) — 8 slides, operating frame and posture (deeper reference)
+- [`artifacts/Augrade Operating Doctrine Companion v2.docx`](artifacts/Augrade%20Operating%20Doctrine%20Companion%20v2.docx) — pairs with the doctrine deck
+- [`artifacts/Augrade Paper Trajectory Supplement v2.docx`](artifacts/Augrade%20Paper%20Trajectory%20Supplement%20v2.docx) — publishable-paper ladder, independent track
+- [`artifacts/Augrade GNN Strategy v2.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2.pptx) — original 18-slide source from which the three decks were split
+- [`artifacts/Augrade GNN Strategy.pdf`](artifacts/Augrade%20GNN%20Strategy.pdf) — PDF of the original 18-slide deck; superseded by the split decks above
+
+The Presenter deck is the default for in-person discussion: one idea per slide,
+no decorative letter-spacing, baby version of the open questions, and a single
+slide on the core-encoder → subagent contract. Technical and Doctrine are
+opened only to drill in.
+
+See [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md) for why the deck was split:
+external review surfaced density, meta-rhetoric, and breadth-without-conviction
+problems. The split preserves the technical content for direct discussion and
+isolates the operating-doctrine slides for a separate audience.
 
 The markdown files remain the repo source of truth; the PDF/PPTX/DOCX files are
 portable handoff exports.
@@ -51,7 +64,9 @@ Read in this order:
 
 1. [`00_START_HERE.md`](00_START_HERE.md) — original project prompt, reader
    contract, KISS path, and epistemic-status model.
-2. [`prompt.md`](prompt.md) — current objective.
+2. [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md) — external review, slop
+   diagnosis, and the HATCH-IoU pivot. Read this before the older docs so
+   the rest is filtered through the current narrowing.
 3. [`TALK_TRACK.md`](TALK_TRACK.md) — single-page talk track for the
    follow-up conversation, with per-claim citation anchors.
 4. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
@@ -89,7 +104,6 @@ Supporting docs:
 - [`02_graph_representations.md`](02_graph_representations.md)
 - [`03_predictive_editing.md`](03_predictive_editing.md)
 - [`05_annotation_intake.md`](05_annotation_intake.md)
-- [`CONSOLIDATION_GUIDE.md`](CONSOLIDATION_GUIDE.md)
 - [`experiments/README.md`](experiments/README.md)
 
 ## Epistemic Posture
