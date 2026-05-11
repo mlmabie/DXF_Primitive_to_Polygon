@@ -1,5 +1,9 @@
 # DXF Primitive-to-Polygon Reconstruction
 
+- **Runnable solver:** [`tokenize_dxf.py`](tokenize_dxf.py) — stdlib, no install. Default output in [`out/`](out/).
+- **Approach:** [`DESIGN.md`](DESIGN.md) — one page, per-family strategy and failure modes.
+- **Next-phase research:** [`gnn_plan/`](gnn_plan/) — separate plan, not part of the current artifact.
+
 Airport mezzanine DXF: ~67,000 primitives across ~111 layers, no
 grouping metadata, recover closed polygons grouped by element type.
 
@@ -151,7 +155,8 @@ These are advanced surfaces, not the default path.
 ### Grid search
 
 [`scripts/grid_search.py`](scripts/grid_search.py) sweeps `snap × joint`
-ranked by HATCH-IoU + coverage. Outputs a results CSV and a Pareto-front
+ranked by HATCH-IoU (intersection-over-union of recovered polygons
+against companion-layer HATCH boundaries) + coverage. Outputs a results CSV and a Pareto-front
 SVG. Empirical findings are written up in
 [`reference/process/topology_coupling_experiment.md`](reference/process/topology_coupling_experiment.md);
 the headline is that coupling (joint > 0) is the load-bearing change and
