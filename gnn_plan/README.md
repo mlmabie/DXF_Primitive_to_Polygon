@@ -11,18 +11,16 @@ folder is a workbench for making that plan executable and falsifiable.
 
 For portable handoff artifacts, see:
 
-- [`artifacts/Augrade GNN Strategy v2 - Presenter.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Presenter.pptx) — 9 slides, low-density presenter deck (default for live discussion)
-- [`artifacts/Augrade GNN Strategy v2 - Technical.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Technical.pptx) — 13 slides, mechanism stack and curriculum (deeper reference)
-- [`artifacts/Augrade GNN Strategy v2 - Doctrine.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Doctrine.pptx) — 8 slides, operating frame and posture (deeper reference)
+- [`artifacts/Augrade GNN Strategy v2 - Technical.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Technical.pptx) — 13 slides, mechanism stack and curriculum (the deck used during live discussion)
+- [`artifacts/Augrade GNN Strategy v2 - Doctrine.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2%20-%20Doctrine.pptx) — 8 slides, operating frame and posture (the deck used during live discussion)
 - [`artifacts/Augrade Operating Doctrine Companion v2.docx`](artifacts/Augrade%20Operating%20Doctrine%20Companion%20v2.docx) — pairs with the doctrine deck
 - [`artifacts/Augrade Paper Trajectory Supplement v2.docx`](artifacts/Augrade%20Paper%20Trajectory%20Supplement%20v2.docx) — publishable-paper ladder, independent track
-- [`artifacts/Augrade GNN Strategy v2.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2.pptx) — original 18-slide source from which the three decks were split
+- [`artifacts/Augrade GNN Strategy v2.pptx`](artifacts/Augrade%20GNN%20Strategy%20v2.pptx) — original 18-slide source from which Technical + Doctrine were split
 - [`artifacts/Augrade GNN Strategy.pdf`](artifacts/Augrade%20GNN%20Strategy.pdf) — PDF of the original 18-slide deck; superseded by the split decks above
 
-The Presenter deck is the default for in-person discussion: one idea per slide,
-no decorative letter-spacing, baby version of the open questions, and a single
-slide on the core-encoder → subagent contract. Technical and Doctrine are
-opened only to drill in.
+The Technical and Doctrine decks are the working pair — switch between them in
+live conversation. A short-form Presenter deck was tried and discarded; the
+two-deck pattern was sufficient.
 
 See [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md) for why the deck was split:
 external review surfaced density, meta-rhetoric, and breadth-without-conviction
@@ -76,27 +74,32 @@ Read in this order:
 6. [`06_example_insights.md`](06_example_insights.md) — example-driven update
    from the three received annotated DWGs.
 7. [`13_primary_answer.md`](13_primary_answer.md) — direct answer to the
-   vector-soup-to-supervector GNN training question.
-8. [`14_architecture_training_minutia.md`](14_architecture_training_minutia.md)
+   vector-soup-to-supervector GNN training question. Rewritten post-pivot to
+   consolidate HATCH-IoU as the supervision signal, the supervector formation
+   rules, the tensor specification, the SSL/supervised task catalogue, and the
+   core-encoder → subagent contract.
+8. [`17_dxf_tokenization.md`](17_dxf_tokenization.md) — how raw DXF bytes
+   become the primitive table that M2 consumes. Reference for the M1 layer.
+9. [`14_architecture_training_minutia.md`](14_architecture_training_minutia.md)
    — model architecture, losses, sampling, calibration, and ablation details.
-9. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
-   — why not simpler homogeneous, raster-first, or end-to-end alternatives.
-10. [`07_source_review_prompts.md`](07_source_review_prompts.md) — paper/source
-   review queue with source links and per-source prompts.
-11. [`08_scope_resolver.md`](08_scope_resolver.md) — trainable scope resolver:
-   objective/edit/residual -> minimal sufficient subgraph.
-12. [`09_precision_conditioning.md`](09_precision_conditioning.md) — stable
-   geometry makes good change cheap.
-13. [`10_operating_doctrine_addendum.md`](10_operating_doctrine_addendum.md) —
-   pessimist route, hybrid GNN/FM/validator/memory doctrine, and quality loops.
-14. [`11_paper_trajectory.md`](11_paper_trajectory.md) — publishable-paper
+10. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
+    — why not simpler homogeneous, raster-first, or end-to-end alternatives.
+11. [`07_source_review_prompts.md`](07_source_review_prompts.md) — paper/source
+    review queue with source links and per-source prompts.
+12. [`08_scope_resolver.md`](08_scope_resolver.md) — trainable scope resolver:
+    objective/edit/residual -> minimal sufficient subgraph.
+13. [`09_precision_conditioning.md`](09_precision_conditioning.md) — stable
+    geometry makes good change cheap.
+14. [`10_operating_doctrine_addendum.md`](10_operating_doctrine_addendum.md) —
+    pessimist route, hybrid GNN/FM/validator/memory doctrine, and quality loops.
+15. [`11_paper_trajectory.md`](11_paper_trajectory.md) — publishable-paper
     ladder and sequencing gates.
-15. [`12_world_model_bridge.md`](12_world_model_bridge.md) — bridge from raw
+16. [`12_world_model_bridge.md`](12_world_model_bridge.md) — bridge from raw
     3D / VLA / JEPA / world-model encoders into a multiscale graph substrate.
-16. [`16_epistemic_controls.md`](16_epistemic_controls.md) — controls against
+17. [`16_epistemic_controls.md`](16_epistemic_controls.md) — controls against
     reference spoofing, approach drift, over-claiming, and cognitive-security
     drift in the research workbench.
-17. [`04_research_map.md`](04_research_map.md) — citation shelf.
+18. [`04_research_map.md`](04_research_map.md) — citation shelf.
 
 Supporting docs:
 
