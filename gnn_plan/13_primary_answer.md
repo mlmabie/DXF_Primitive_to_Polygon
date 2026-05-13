@@ -1,6 +1,6 @@
 # Primary Answer: Training A GNN Over DXF/DWG Vector Soup
 
-Last revised: 2026-05-11, after the external review and the post-pivot conversation that this document now consolidates.
+Last revised: 2026-05-12 (PDT), after the external review and the post-pivot conversation that this document now consolidates.
 
 ## The one-sentence answer
 

@@ -1,4 +1,4 @@
-# GNN Plan Setup
+# GNN Plan Workbench
 
 This folder is the working surface for the next phase: graph learning over
 DWG/DXF vector soup, plus predictive modeling for architectural systems and
@@ -29,6 +29,11 @@ isolates the operating-doctrine slides for a separate audience.
 
 The markdown files remain the repo source of truth; the PDF/PPTX/DOCX files are
 portable handoff exports.
+
+For a post-call follow-up, send [`13_primary_answer.md`](13_primary_answer.md)
+as the consolidated answer and pair it with the Technical deck. Use
+[`TALK_TRACK.md`](TALK_TRACK.md) as speaking notes; use the Doctrine deck only
+when the conversation turns to operating posture.
 
 ## Current Assumptions
 
@@ -67,19 +72,19 @@ Read in this order:
    the rest is filtered through the current narrowing.
 3. [`TALK_TRACK.md`](TALK_TRACK.md) — single-page talk track for the
    follow-up conversation, with per-claim citation anchors.
-4. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
-   data contracts, eval bar, and the first slice (Phases 0–2).
-5. [`SENSEMAKING.md`](SENSEMAKING.md) — compact consolidation of the useful
-   support notes and current research judgment.
-6. [`06_example_insights.md`](06_example_insights.md) — example-driven update
-   from the three received annotated DWGs.
-7. [`13_primary_answer.md`](13_primary_answer.md) — direct answer to the
+4. [`13_primary_answer.md`](13_primary_answer.md) — direct answer to the
    vector-soup-to-supervector GNN training question. Rewritten post-pivot to
    consolidate HATCH-IoU as the supervision signal, the supervector formation
    rules, the tensor specification, the SSL/supervised task catalogue, and the
    core-encoder → subagent contract.
-8. [`17_dxf_tokenization.md`](17_dxf_tokenization.md) — how raw DXF bytes
+5. [`17_dxf_tokenization.md`](17_dxf_tokenization.md) — how raw DXF bytes
    become the primitive table that M2 consumes. Reference for the M1 layer.
+6. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
+   data contracts, eval bar, and the first slice (Phases 0–2).
+7. [`SENSEMAKING.md`](SENSEMAKING.md) — compact consolidation of the useful
+   support notes and current research judgment.
+8. [`06_example_insights.md`](06_example_insights.md) — example-driven update
+   from the three received annotated DWGs.
 9. [`14_architecture_training_minutia.md`](14_architecture_training_minutia.md)
    — model architecture, losses, sampling, calibration, and ablation details.
 10. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
