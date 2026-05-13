@@ -73,7 +73,7 @@ Formation rules per family:
 
 **Annotations.** TEXT / MTEXT / DIMENSION / LEADER entities → annotation supervectors directly, with `points_to` candidate edges to spatial neighbors.
 
-Three properties matter: candidates **overlap** (same primitive can belong to multiple supervectors — the NMM cover-system analogy), candidates carry **provenance** (formation rule, member primitives, source layers, all auditable), and IDs are **stable** (re-running formation on the same input produces the same IDs so the per-node cache can invalidate locally on edits).
+Three properties matter: candidates **overlap** (same primitive can belong to multiple supervectors — the NMM cover-system analogy: Numerical Manifold Method's dual mathematical/physical cover, see [`TALK_TRACK.md`](TALK_TRACK.md)), candidates carry **provenance** (formation rule, member primitives, source layers, all auditable), and IDs are **stable** (re-running formation on the same input produces the same IDs so the per-node cache can invalidate locally on edits).
 
 ## The tensor
 
@@ -189,8 +189,8 @@ Deployment order: (1) pair-relation scoring ships first; (2) HATCH-IoU SSL pretr
 
 The frontier-model-callable surface is a four-stage pipeline:
 
-1. **Train the core encoder.** Heterogeneous GNN, R = 3 rounds. Pretrained via SSL on HATCH-IoU + rewrite-invariance contrast + masked-relation. Output: per-node embedding (256d). **Frozen after Phase 4.** One-time investment.
-2. **Specialize with small heads.** Freeze the encoder; attach task-specific heads (linear, small MLP, or BT density-ratio for the kalomaze ranker). Each is a few thousand to a few million parameters and trains in minutes on commodity hardware. Most labels are programmatic.
+1. **Train the core encoder.** Heterogeneous GNN, R ≈ 3 rounds. Pretrained via SSL on HATCH-IoU + rewrite-invariance contrast + masked-relation. Output: per-node embedding (~256d). **Frozen after Phase 4.** One-time investment.
+2. **Specialize with small heads.** Freeze the encoder; attach task-specific heads (linear, small MLP, or BT density-ratio for the kalomaze ranker: freeze a large backbone and train one Bradley-Terry linear head for edit acceptance, see [`TALK_TRACK.md`](TALK_TRACK.md)). Each is a few thousand to a few million parameters and trains in minutes on commodity hardware. Most labels are programmatic.
 3. **Calibrate.** Conformal prediction on a drawing-level holdout. Output is not a probability; it is a **band**: `{accept | route_to_expert | reject}` with a formal coverage guarantee. The risk band is the published contract.
 4. **Package as a tool.** JSON input/output schema, idempotent, documented `does_not_do` contract, versioned HTTP/RPC. This is the surface Opus or GPT-5.5 actually calls.
 
@@ -299,4 +299,4 @@ After the pivot, the load-bearing gaps are:
 
 ## Final form
 
-> Train the GNN as a small, calibrated, frozen-encoder ranker over deterministically-formed supervector candidates. Pretrain on HATCH-IoU and rewrite invariance. Specialize with small heads per task, calibrate via conformal prediction, expose each head as a tool with a `does_not_do` contract. Keep validators deterministic and outside the learned stack. Partition examples into gold / silver / amber / red. Treat the composition — not any single architecture choice — as the contribution.
+> Train the GNN as a small, calibrated, frozen-encoder ranker over deterministically-formed supervector candidates. Pretrain on HATCH-IoU and rewrite invariance. Specialize with small heads per task, calibrate via conformal prediction, expose each head as a tool with a `does_not_do` contract. Keep validators deterministic and outside the learned stack. Partition examples into gold / silver / amber / red. The system composition is a foundational contribution that sets us up for years of architecture wins.

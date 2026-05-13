@@ -269,7 +269,6 @@ operational reading is in [`SENSEMAKING.md`](SENSEMAKING.md).
 
 ## Closing line
 
-> Substrate first. Frontier intelligence borrowed. Validators decide truth.
 > Build the smallest stack that survives contact with the product loop —
 > deterministic geometry, stable object identity, typed relations, calibrated
 > learned residual scoring, deterministic validators — then add learned
