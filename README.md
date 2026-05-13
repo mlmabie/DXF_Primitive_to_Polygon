@@ -1,8 +1,13 @@
 # DXF Primitive-to-Polygon Reconstruction
 
-- **Runnable solver:** [`tokenize_dxf.py`](tokenize_dxf.py) — stdlib, no install. Default output in [`out/`](out/).
+> **Active focus:** the layer-blind graph-learning plan in [`gnn_plan/`](gnn_plan/) — start with
+> [`gnn_plan/00_START_HERE.md`](gnn_plan/00_START_HERE.md) and the consolidated answer in
+> [`gnn_plan/13_primary_answer.md`](gnn_plan/13_primary_answer.md). Handoff decks live in
+> [`gnn_plan/artifacts/`](gnn_plan/artifacts/) (Technical + Doctrine).
+
+- **Runnable solver:** [`tokenize_dxf.py`](tokenize_dxf.py) — stdlib, no install. Default output in [`out/`](out/). The take-home artifact this repo was built around.
 - **Approach:** [`DESIGN.md`](DESIGN.md) — one page, per-family strategy and failure modes.
-- **Next-phase research:** [`gnn_plan/`](gnn_plan/) — separate plan, not part of the current artifact.
+- **Next-phase research:** [`gnn_plan/`](gnn_plan/) — the current active body of work: HATCH-IoU as supervision signal, deterministically-formed supervector candidates, calibrated heads a frontier model can call as tools.
 
 Airport mezzanine DXF: ~67,000 primitives across ~111 layers, no
 grouping metadata, recover closed polygons grouped by element type.
