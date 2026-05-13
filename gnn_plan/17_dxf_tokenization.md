@@ -1,6 +1,6 @@
 # DXF Tokenization — How We Get To Primitives
 
-This is the M1 layer in the stack. It turns raw DXF bytes into the typed primitive table that supervector formation (M2) consumes. The existing `tokenize_dxf.py` in the repo root is the first-pass implementation of what this document describes.
+This is the M1 layer in the stack. It turns raw DXF bytes into the typed primitive table that supervector formation (M2) consumes. The existing `tokenize_dxf.py` in the repo root is the scoped reviewer implementation; this document describes the generalized production contract it should grow toward.
 
 ## What DXF actually is
 
@@ -64,7 +64,7 @@ def parse_entities(pairs):
         yield current
 ```
 
-That is the spine. Real implementations also handle section transitions, BLOCKS definitions, and per-entity-type structural codes (HATCH boundary paths nest, splines have control-point lists, etc.). The existing `tokenize_dxf.py` is large mostly because of those per-entity expansions.
+That is the spine. Real implementations also handle section transitions, BLOCKS definitions, and per-entity-type structural codes (HATCH boundary paths nest, splines have control-point lists, etc.). The existing `tokenize_dxf.py` is large mostly because the scoped solver already has several of these per-entity expansions for the wall/column/curtain-wall task.
 
 ## Entity-typed extraction
 
@@ -86,16 +86,16 @@ After the raw stream, each entity becomes a typed object with exact geometry:
 
 Each entity carries a stable **handle** (group code `5`, hex string) that uniquely identifies it within the file. That handle becomes the primitive's stable id across re-tokenizations.
 
-## Five gotchas the existing solver already handles
+## Five gotchas to keep explicit
 
-1. **OCS vs WCS.** `CIRCLE`, `ARC`, `LWPOLYLINE`, and `HATCH` define geometry in their own Object Coordinate System with an extrusion vector (codes `210`/`220`/`230`). For nearly all floor plans the extrusion is `(0, 0, 1)` and OCS = WCS — but you must check. Otherwise you get mirrored or rotated geometry on a small fraction of entities.
-2. **HATCH boundary parsing is recursive.** A HATCH has an outer boundary plus optional holes; each boundary is a sequence of edges; each edge can be a line, arc, ellipse arc, or spline. Group code `92` gives the boundary count, `93` the edge count per boundary, `72` the edge type per edge. Most naive parsers break here. The companion-layer pairing for HATCH-IoU supervision lives downstream of this.
-3. **INSERT resolution.** Blocks are defined in the `BLOCKS` section. When the entity stream contains an `INSERT (name=BLK_DOOR, pos=…, scale=…, rot=…)`, two options:
+1. **OCS vs WCS.** `CIRCLE`, `ARC`, `LWPOLYLINE`, and `HATCH` define geometry in their own Object Coordinate System with an extrusion vector (codes `210`/`220`/`230`). The supplied scoped layers are effectively world-coordinate floor-plan entities, but the production tokenizer must check and apply arbitrary-axis transforms. Otherwise a small fraction of entities can be mirrored or rotated.
+2. **HATCH boundary parsing is recursive.** A HATCH has an outer boundary plus optional holes; each boundary is a sequence of edges; each edge can be a line, arc, ellipse arc, or spline. Group code `92` gives the boundary count, `93` the edge count per boundary, `72` the edge type per edge. The current solver parses scoped outer/external HATCH paths and skips hole/default candidates; the production path needs hole-aware assembly. The companion-layer pairing for HATCH-IoU supervision lives downstream of this.
+3. **INSERT resolution.** Blocks are defined in the `BLOCKS` section. The current solver does not use INSERTs for reconstruction. For the GNN pipeline, when the entity stream contains an `INSERT (name=BLK_DOOR, pos=…, scale=…, rot=…)`, there are two useful views:
    - Keep it as a named supervector (good for symbol identity)
    - Explode into constituent primitives at the transform (good for raw coverage)
-   - The pipeline does **both**: emit the INSERT as a supervector AND emit the exploded primitives with an `exploded_from_insert` flag plus a `parent_of` edge back to the INSERT.
-4. **Encoding.** DXF files are often Windows-1252, sometimes UTF-8, occasionally mixed. Open with `cp1252` and a fallback on `TEXT` / `MTEXT` / layer-name decoding.
-5. **Polyline bulges.** `LWPOLYLINE` vertices can carry a `bulge` value (group code `42`) that turns a straight segment into an arc. The bulge is `tan(theta/4)` where `theta` is the included angle. Bulge-bearing segments must be expanded into arc parameters before snapping.
+   - The generalized pipeline should do **both**: emit the INSERT as a supervector and emit exploded primitives with an `exploded_from_insert` flag plus a `parent_of` edge back to the INSERT.
+4. **Encoding.** DXF files are often Windows-1252, sometimes UTF-8, occasionally mixed. The reviewer solver uses a permissive text path because the supplied file is parseable; production should treat decoding as data quality and keep a fallback strategy for `TEXT` / `MTEXT` / layer-name fields.
+5. **Polyline bulges.** `LWPOLYLINE` vertices can carry a `bulge` value (group code `42`) that turns a straight segment into an arc. The bulge is `tan(theta/4)` where `theta` is the included angle. The current solver treats many scoped bulged segments as chord approximations; the production tokenizer should expand bulge-bearing segments into arc parameters before snapping when curvature affects the downstream task.
 
 ## Token-stream output schema
 
@@ -128,7 +128,7 @@ This is the M1 output. Everything downstream — M2 supervector formation, M3 gr
 
 ## What changes vs the existing solver
 
-The current `tokenize_dxf.py` produces a usable token stream and filters to `wall` / `column` / `curtain_wall` carriers for the scoped polygon-reconstruction task. The GNN pipeline needs three extensions:
+The current `tokenize_dxf.py` produces a usable scoped token stream and filters to `wall` / `column` / `curtain_wall` carriers for the polygon-reconstruction task. The GNN pipeline needs three extensions:
 
 1. **Persist every primitive, not just the scoped families.** TEXT, DIMENSION, LEADER, INSERT, SPLINE, every layer. Annotation-to-object correspondence and symbol-family detection need the full set.
 2. **Emit the geom pack as a sibling artifact.** Today coordinates are inlined in the JSON output for the scoped families. For the GNN pipeline, exact geometry goes into a separate columnar store addressed by `geom_id` so the feature tensor stays decoupled from float64 coordinates.
@@ -138,7 +138,7 @@ The current `tokenize_dxf.py` produces a usable token stream and filters to `wal
 
 The current solver is stdlib-only and that is deliberate — reviewers can run it without an install step. For the GNN pipeline:
 
-- **Stdlib is sufficient for `LINE`, `LWPOLYLINE`, `ARC`, `CIRCLE`, `INSERT`, `TEXT`, and the basic HATCH boundary cases** common in floor plans.
+- **Stdlib is sufficient for the reviewer path and for common `LINE`, `LWPOLYLINE`, `ARC`, `CIRCLE`, `TEXT`, and basic scoped HATCH cases** common in floor plans.
 - **`ezdxf` is worth the dependency** when handling arbitrary HATCH patterns, complex SPLINEs, OLE entities, complex blocks, dimension styles, paperspace vs modelspace, and unusual encodings. The repo already optionally uses `ezdxf` for two library modules.
 
 The right rule is: stdlib for the runnable reviewer entry point, `ezdxf` for the production pipeline that has to handle messy real-world files. Both produce the same downstream token-stream schema.

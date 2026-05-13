@@ -1,6 +1,6 @@
 # Operating Doctrine Addendum
 
-This addendum condenses the discussion-thread strategy into repo-native form. It complements `SENSEMAKING.md`, `SYSTEM_SPEC.md`, the latest 18-slide deck, and the v2 operating-doctrine companion.
+This addendum condenses the discussion-thread strategy into repo-native form. It complements `SENSEMAKING.md`, `SYSTEM_SPEC.md`, the split Technical/Doctrine decks, and the v2 operating-doctrine companion.
 
 ## Doctrine
 
@@ -168,4 +168,4 @@ Everything else — acceptance rate, repeat-error decay, review-band efficiency,
 
 > The pessimist route is also the moat route.
 
-> The frame ships. The geometry compounds. The best discoveries compile back into the engine.
+> The durable edge is concrete: exact geometry, stable object identity, validator residuals, workflow memory, and repeated discoveries promoted into deterministic rules.
