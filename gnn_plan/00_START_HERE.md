@@ -146,7 +146,7 @@ The main counterfactuals live in [`15_counterfactual_architectures.md`](15_count
 
 If you have **5 minutes**:
 
-1. [`workbench/TALK_TRACK.md`](workbench/TALK_TRACK.md)
+1. [`_prep/TALK_TRACK.md`](_prep/TALK_TRACK.md)
 2. [`13_primary_answer.md`](13_primary_answer.md) — consolidated post-call
    answer
 3. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — goal, module stack, first slice
@@ -156,14 +156,14 @@ If you have **5 minutes**:
 If you have **20 minutes**, add:
 
 5. [`17_dxf_tokenization.md`](17_dxf_tokenization.md)
-6. [`workbench/SENSEMAKING.md`](workbench/SENSEMAKING.md)
+6. [`_prep/SENSEMAKING.md`](_prep/SENSEMAKING.md)
 7. [`08_scope_resolver.md`](08_scope_resolver.md)
 8. [`10_operating_doctrine_addendum.md`](10_operating_doctrine_addendum.md)
 
 If you want the **research lane**, add:
 
 9. [`04_research_map.md`](04_research_map.md)
-10. [`workbench/07_source_review_prompts.md`](workbench/07_source_review_prompts.md)
+10. [`_prep/07_source_review_prompts.md`](_prep/07_source_review_prompts.md)
 11. [`11_paper_trajectory.md`](11_paper_trajectory.md)
 12. [`16_epistemic_controls.md`](16_epistemic_controls.md)
 

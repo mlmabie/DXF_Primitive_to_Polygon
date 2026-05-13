@@ -1,6 +1,6 @@
 # Operating Doctrine Addendum
 
-This addendum condenses the discussion-thread strategy into repo-native form. It complements `workbench/SENSEMAKING.md`, `SYSTEM_SPEC.md`, the split Technical/Doctrine decks, and the v2 operating-doctrine companion.
+This addendum condenses the discussion-thread strategy into repo-native form. It complements `_prep/SENSEMAKING.md`, `SYSTEM_SPEC.md`, the split Technical/Doctrine decks, and the v2 operating-doctrine companion.
 
 ## Doctrine
 

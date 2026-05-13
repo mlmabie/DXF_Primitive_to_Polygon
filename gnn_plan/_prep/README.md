@@ -1,4 +1,4 @@
-# Workbench
+# Prep
 
 Speaker-facing and personal-prep material that supports the gnn_plan reference
 docs but is not part of the proposal itself. Keep these out of the top-level
