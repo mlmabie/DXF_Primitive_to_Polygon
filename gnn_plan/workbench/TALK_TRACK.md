@@ -1,8 +1,8 @@
 # Talk Track
 
 Live-conversation reference. Source for follow-up calls. Detailed material is
-in [`13_primary_answer.md`](13_primary_answer.md), [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md),
-[`17_dxf_tokenization.md`](17_dxf_tokenization.md), and [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md).
+in [`../13_primary_answer.md`](../13_primary_answer.md), [`../SYSTEM_SPEC.md`](../SYSTEM_SPEC.md),
+[`../17_dxf_tokenization.md`](../17_dxf_tokenization.md), and [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md).
 
 ## One-sentence frame
 
@@ -108,7 +108,7 @@ gradients never flow through the geometry pack. Five gotchas: OCS vs WCS,
 recursive HATCH boundary parsing, INSERT explosion (keep both as supervector
 AND exploded primitives), encoding (cp1252 default), polyline bulges expanded
 to arcs before snapping. Detail in
-[`17_dxf_tokenization.md`](17_dxf_tokenization.md).
+[`../17_dxf_tokenization.md`](../17_dxf_tokenization.md).
 
 ## Core encoder → subagent → tool
 
@@ -266,7 +266,7 @@ in the original deck slide 17 if needed.)
 | Calibration matters more than F1 in low-label regime | Vovk, Gammerman, Shafer (Algorithmic Learning in a Random World); local merge-lab calibration evidence |
 | Residual edit framing | Goel et al. ICLR 2026 (any-subgroup equivariance); Wang et al. 2026 (Temporal Straightening for Latent Planning); Petrenko et al. ICLR 2026 (Entropy-Preserving RL) — all later-stage |
 
-Detailed citations live in [`04_research_map.md`](04_research_map.md). The
+Detailed citations live in [`../04_research_map.md`](../04_research_map.md). The
 operational reading is in [`SENSEMAKING.md`](SENSEMAKING.md).
 
 ## Closing line

@@ -8,11 +8,11 @@ the right place to preserve detail, while raster or CNN features can help as
 auxiliary context.
 
 For the review workflow, source links, and per-source poster prompts, see
-[`07_source_review_prompts.md`](07_source_review_prompts.md) and
+[`workbench/07_source_review_prompts.md`](workbench/07_source_review_prompts.md) and
 `reference/reviews/source_review_tracker.csv`.
 
 For the per-claim anchor list (which paper supports which talk-track claim) see
-[`TALK_TRACK.md`](TALK_TRACK.md).
+[`workbench/TALK_TRACK.md`](workbench/TALK_TRACK.md).
 
 ## Directly Relevant To Layer-Blind CAD Graph Classification
 

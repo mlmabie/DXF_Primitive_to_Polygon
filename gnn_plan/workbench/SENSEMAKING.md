@@ -2,7 +2,7 @@
 
 This is the compact version of the support notes. It preserves the useful
 judgment without making the repo a diary. It is support material; the current
-sendable answer is [`13_primary_answer.md`](13_primary_answer.md), with
+sendable answer is [`../13_primary_answer.md`](../13_primary_answer.md), with
 [`TALK_TRACK.md`](TALK_TRACK.md) as the live-call reference.
 
 ## Current Direction

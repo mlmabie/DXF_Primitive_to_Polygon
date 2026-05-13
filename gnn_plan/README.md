@@ -22,7 +22,7 @@ The Technical and Doctrine decks are the working pair — switch between them in
 live conversation. A short-form Presenter deck was tried and discarded; the
 two-deck pattern was sufficient.
 
-See [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md) for why the deck was split:
+See [`workbench/REVIEW_AND_PIVOT.md`](workbench/REVIEW_AND_PIVOT.md) for why the deck was split:
 external review surfaced density, meta-rhetoric, and breadth-without-conviction
 problems. The split preserves the technical content for direct discussion and
 isolates the operating-doctrine slides for a separate audience.
@@ -32,7 +32,7 @@ portable handoff exports.
 
 For a post-call follow-up, send [`13_primary_answer.md`](13_primary_answer.md)
 as the consolidated answer and pair it with the Technical deck. Use
-[`TALK_TRACK.md`](TALK_TRACK.md) as speaking notes; use the Doctrine deck only
+[`workbench/TALK_TRACK.md`](workbench/TALK_TRACK.md) as speaking notes; use the Doctrine deck only
 when the conversation turns to operating posture.
 
 ## Current Assumptions
@@ -67,10 +67,10 @@ Read in this order:
 
 1. [`00_START_HERE.md`](00_START_HERE.md) — original project prompt, reader
    contract, KISS path, and epistemic-status model.
-2. [`REVIEW_AND_PIVOT.md`](REVIEW_AND_PIVOT.md) — external review, slop
+2. [`workbench/REVIEW_AND_PIVOT.md`](workbench/REVIEW_AND_PIVOT.md) — external review, slop
    diagnosis, and the HATCH-IoU pivot. Read this before the older docs so
    the rest is filtered through the current narrowing.
-3. [`TALK_TRACK.md`](TALK_TRACK.md) — single-page talk track for the
+3. [`workbench/TALK_TRACK.md`](workbench/TALK_TRACK.md) — single-page talk track for the
    follow-up conversation, with per-claim citation anchors.
 4. [`13_primary_answer.md`](13_primary_answer.md) — direct answer to the
    vector-soup-to-supervector GNN training question. Rewritten post-pivot to
@@ -81,7 +81,7 @@ Read in this order:
    become the primitive table that M2 consumes. Reference for the M1 layer.
 6. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
    data contracts, eval bar, and the first slice (Phases 0–2).
-7. [`SENSEMAKING.md`](SENSEMAKING.md) — compact consolidation of the useful
+7. [`workbench/SENSEMAKING.md`](workbench/SENSEMAKING.md) — compact consolidation of the useful
    support notes and current research judgment.
 8. [`06_example_insights.md`](06_example_insights.md) — example-driven update
    from the three received annotated DWGs.
@@ -89,7 +89,7 @@ Read in this order:
    — model architecture, losses, sampling, calibration, and ablation details.
 10. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
     — why not simpler homogeneous, raster-first, or end-to-end alternatives.
-11. [`07_source_review_prompts.md`](07_source_review_prompts.md) — paper/source
+11. [`workbench/07_source_review_prompts.md`](workbench/07_source_review_prompts.md) — paper/source
     review queue with source links and per-source prompts.
 12. [`08_scope_resolver.md`](08_scope_resolver.md) — trainable scope resolver:
     objective/edit/residual -> minimal sufficient subgraph.
@@ -133,7 +133,7 @@ This plan builds on the current deterministic scaffold:
   motivates pair-relation learning.
 - [`../reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md`](../reference/experiments/LATENT_DIMENSIONS_EXPERIMENT_CHECKLIST.md)
   gives the previous staged experiment plan.
-- [`SENSEMAKING.md`](SENSEMAKING.md) consolidates the useful generated support
+- [`workbench/SENSEMAKING.md`](workbench/SENSEMAKING.md) consolidates the useful generated support
   notes into the current research judgment.
 
 The new layer-blind assumption is stricter than the current solver. Existing

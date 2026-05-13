@@ -32,7 +32,7 @@ Every load-bearing idea should be placed in one of these lanes.
 | Commitment | We can defend this from first principles or direct repo evidence. | vector-first state, stable ids, validators outside learned stack, sparse baselines before GNNs |
 | Hypothesis | Plausible and central, but must be tested. | hetero primitive/supervector/annotation/face graph beats simpler baselines on some relation tasks |
 | Candidate mechanism | Useful tool to try if a residual calls for it. | GraphSAGE, GATv2, PNA, matryoshka embeddings, Hopfield memory, rewrite loss |
-| Reference prompt | Source lead to review; not yet load-bearing. | paper/source entries in `07_source_review_prompts.md` |
+| Reference prompt | Source lead to review; not yet load-bearing. | paper/source entries in `workbench/07_source_review_prompts.md` |
 | Deferred | Interesting but premature until substrate is stable. | large graph transformer, hosted RL verifier environments, mech-interp on large pretrained CAD GNN |
 
 ## Claim ledger
@@ -61,7 +61,7 @@ Rule:
 
 ## Source-review gate
 
-For each source in [`07_source_review_prompts.md`](07_source_review_prompts.md),
+For each source in [`workbench/07_source_review_prompts.md`](workbench/07_source_review_prompts.md),
 the reviewer should answer:
 
 1. What representation does the paper actually use?
