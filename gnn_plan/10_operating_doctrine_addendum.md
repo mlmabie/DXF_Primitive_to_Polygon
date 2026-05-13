@@ -168,4 +168,5 @@ Everything else — acceptance rate, repeat-error decay, review-band efficiency,
 
 > The pessimist route is also the moat route.
 
-> The durable edge is concrete: exact geometry, stable object identity, validator residuals, workflow memory, and repeated discoveries promoted into deterministic rules.
+> The frame ships; the geometry compounds.
+> In practice: exact geometry, stable object identity, validator residuals, workflow memory, and repeated discoveries promoted into deterministic rules.

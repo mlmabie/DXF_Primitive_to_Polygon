@@ -235,8 +235,10 @@ independently of any specific task, discontinuity as feature type.
 - "Layer names are reliable." This repo shows they are not.
 - "Raster is enough." Vector-native literature disagrees; HATCH-vs-outline
   evidence shows why.
-- "The frame ships; the geometry compounds." Aphorism. Replace with a
-  concrete claim — that line is exactly what your friend flagged as slop.
+- "The frame ships; the geometry compounds" as a standalone line. Keep the
+  aphorism only when it is immediately grounded in the concrete mechanism:
+  exact geometry, stable object identity, validator residuals, workflow
+  memory, and repeated discoveries promoted into deterministic rules.
 
 ## Open questions to surface (baby version, three)
 

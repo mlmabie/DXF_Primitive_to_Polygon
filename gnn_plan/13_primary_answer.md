@@ -299,4 +299,4 @@ After the pivot, the load-bearing gaps are:
 
 ## Final form
 
-> Train the GNN as a small, calibrated, frozen-encoder ranker over deterministically-formed supervector candidates. Pretrain on HATCH-IoU and rewrite invariance. Specialize with small heads per task, calibrate via conformal prediction, expose each head as a tool with a `does_not_do` contract. Keep validators deterministic and outside the learned stack. Partition examples into gold / silver / amber / red. The system composition is a foundational contribution that sets us up for years of architecture wins.
+> Train the GNN as a small, calibrated, frozen-encoder ranker over deterministically-formed supervector candidates. Pretrain on HATCH-IoU and rewrite invariance. Specialize with small heads per task, calibrate via conformal prediction, expose each head as a tool with a `does_not_do` contract. Keep validators deterministic and outside the learned stack. Partition examples into gold / silver / amber / red. The system composition is the contribution: it lets future architecture wins compound without pretending any single architecture choice is already proven.
