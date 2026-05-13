@@ -232,6 +232,12 @@ Rules:
 - must report where the GNN improves over the baseline by relation type, not
   only on average.
 - must reuse the same calibration head as M3.
+- the encoder is pretrained via SSL on held-out HATCH-boundary prediction
+  (the headline supervision signal — see [`13_primary_answer.md`](13_primary_answer.md))
+  plus rewrite-invariance contrast and masked-relation prediction, before any
+  supervised label is shown.
+- the encoder is frozen after Phase 4. Per-task heads are small (linear or
+  shallow MLP) and trained on programmatic labels first.
 
 ### M6. Structured Readout
 
@@ -272,6 +278,8 @@ accessibility. These belong outside the learned stack.
 A change ships only if it improves at least one of these without regressing
 the others by more than a stated tolerance:
 
+- HATCH-IoU on a held-out slice (self-supervised shape correctness — the
+  load-bearing post-pivot metric)
 - relation classification accuracy by type (not only macro F1)
 - review-band efficiency: fraction of cases that auto-merge or reject without
   reviewer touch, at fixed precision
@@ -280,6 +288,9 @@ the others by more than a stated tolerance:
   accepts on the first round
 - compute envelope: graph construction, feature generation, scorer
   forward-pass profiled separately
+
+Splits are by drawing or project, never by entity. Random entity splits leak
+drafter style and overstate generalization.
 
 ## First Slice: Phase 0 Through Phase 2
 
