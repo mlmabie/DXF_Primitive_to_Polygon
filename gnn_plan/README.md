@@ -35,6 +35,9 @@ as the consolidated answer and pair it with the Technical deck. Use
 [`_prep/TALK_TRACK.md`](_prep/TALK_TRACK.md) as speaking notes; use the Doctrine deck only
 when the conversation turns to operating posture.
 
+For a CTO follow-up specifically about 2D drawings to 3D BIM, use
+[`18_2d_to_3d_bim_gnn_strategy.md`](18_2d_to_3d_bim_gnn_strategy.md).
+
 ## Current Assumptions
 
 - Inputs are DWG and DXF.
@@ -79,32 +82,36 @@ Read in this order:
    core-encoder → subagent contract.
 5. [`17_dxf_tokenization.md`](17_dxf_tokenization.md) — how raw DXF bytes
    become the primitive table that M2 consumes. Reference for the M1 layer.
-6. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
+6. [`18_2d_to_3d_bim_gnn_strategy.md`](18_2d_to_3d_bim_gnn_strategy.md) —
+   CTO-facing 2D-to-3D BIM strategy: starting GNN architecture, BIM-lifting
+   heads, losses, supervision sources, architecture search, frontier-model
+   role, and product-research roadmap.
+7. [`SYSTEM_SPEC.md`](SYSTEM_SPEC.md) — concrete buildable system: modules,
    data contracts, eval bar, and the first slice (Phases 0–2).
-7. [`_prep/SENSEMAKING.md`](_prep/SENSEMAKING.md) — compact consolidation of the useful
+8. [`_prep/SENSEMAKING.md`](_prep/SENSEMAKING.md) — compact consolidation of the useful
    support notes and current research judgment.
-8. [`06_example_insights.md`](06_example_insights.md) — example-driven update
+9. [`06_example_insights.md`](06_example_insights.md) — example-driven update
    from the three received annotated DWGs.
-9. [`14_architecture_training_minutia.md`](14_architecture_training_minutia.md)
+10. [`14_architecture_training_minutia.md`](14_architecture_training_minutia.md)
    — model architecture, losses, sampling, calibration, and ablation details.
-10. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
+11. [`15_counterfactual_architectures.md`](15_counterfactual_architectures.md)
     — why not simpler homogeneous, raster-first, or end-to-end alternatives.
-11. [`_prep/07_source_review_prompts.md`](_prep/07_source_review_prompts.md) — paper/source
+12. [`_prep/07_source_review_prompts.md`](_prep/07_source_review_prompts.md) — paper/source
     review queue with source links and per-source prompts.
-12. [`08_scope_resolver.md`](08_scope_resolver.md) — trainable scope resolver:
+13. [`08_scope_resolver.md`](08_scope_resolver.md) — trainable scope resolver:
     objective/edit/residual -> minimal sufficient subgraph.
-13. [`09_precision_conditioning.md`](09_precision_conditioning.md) — stable
+14. [`09_precision_conditioning.md`](09_precision_conditioning.md) — stable
     geometry makes good change cheap.
-14. [`10_operating_doctrine_addendum.md`](10_operating_doctrine_addendum.md) —
+15. [`10_operating_doctrine_addendum.md`](10_operating_doctrine_addendum.md) —
     pessimist route, hybrid GNN/FM/validator/memory doctrine, and quality loops.
-15. [`11_paper_trajectory.md`](11_paper_trajectory.md) — publishable-paper
+16. [`11_paper_trajectory.md`](11_paper_trajectory.md) — publishable-paper
     ladder and sequencing gates.
-16. [`12_world_model_bridge.md`](12_world_model_bridge.md) — bridge from raw
+17. [`12_world_model_bridge.md`](12_world_model_bridge.md) — bridge from raw
     3D / VLA / JEPA / world-model encoders into a multiscale graph substrate.
-17. [`16_epistemic_controls.md`](16_epistemic_controls.md) — controls against
+18. [`16_epistemic_controls.md`](16_epistemic_controls.md) — controls against
     reference spoofing, approach drift, over-claiming, and cognitive-security
     drift in the research workbench.
-18. [`04_research_map.md`](04_research_map.md) — citation shelf.
+19. [`04_research_map.md`](04_research_map.md) — citation shelf.
 
 Supporting docs:
 
