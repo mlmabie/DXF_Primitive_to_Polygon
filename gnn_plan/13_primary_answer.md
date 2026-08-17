@@ -250,7 +250,8 @@ Pragmatist epistemics. Each claim goes on a rung; each rung is treated different
 
 ### Speculative (named but flagged as bets, not commitments)
 - Matryoshka embeddings buy real product knobs (cache vs routing vs offline).
-- SAE bridge gives explainability that compiles back into engine rules.
+- Low-dimensional SAE / STE autoencoder probes reveal rewrite and validator
+  residual axes that compile back into engine rules.
 - Verifier environments + hosted RL improve search-space coverage in Phase 5.
 - Objective-loop autonomy reaches the "expert reviews summary" mode within a year.
 

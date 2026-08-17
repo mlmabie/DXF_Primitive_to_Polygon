@@ -204,6 +204,14 @@ choice. Cross the river by feeling the stones.
   iteration. Aligns with the editing-as-fixed-point framing.
 - **Kalomaze move** — freeze a large backbone; train a single
   Bradley-Terry density-ratio linear head for edit acceptance.
+- **Problem-geometry frame** — do not only say intelligence narrows search.
+  A good representation makes some solutions fall out of the geometry of the
+  problem framing. For CAD, the frame is exact geometry + supervectors +
+  HATCH-IoU + validators + workflow memory.
+- **Low-bit autoencoder probe** — train small autoencoders or STE/binary-latent
+  probes over graph neighborhoods and validator residuals to see whether
+  hatch/outline, carrier swap, merge, closure, or annotation-target decisions
+  collapse into compact factors worth compiling into rules.
 
 ## The lineage line — back pocket
 

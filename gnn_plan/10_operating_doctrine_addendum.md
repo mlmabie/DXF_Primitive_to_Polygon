@@ -147,6 +147,40 @@ model discovers geometry -> probes inspect it -> validators verify it -> engine 
 
 The product does not need every concept atom. It needs the geometry that makes edits predictable.
 
+## Problem geometry, not just search
+
+One useful kalomaze framing: some solutions are "destined by the geometry of a
+problem framing." This is stronger than saying intelligence is only clever
+search or MDL-style search-space narrowing. A good frame puts the problem in a
+space where optimization dynamics reveal low-dimensional decompositions that
+were already latent in the setup.
+
+For Augrade, the frame is not "search over CAD edits." It is exact vector
+geometry, deterministic supervector candidates, typed relations, HATCH-IoU,
+validator residuals, and workflow memory. That structure should make some
+solutions fall out: hatch/outline equivalence, carrier-style families,
+rewrite-stable motifs, merge/split regimes, and review-band boundaries.
+
+Continuous latent spaces are useful because they can keep nearby candidate
+solutions alive while local rule iteration and validators discretize the final
+decision. This is the practical bridge between manifold learning and an
+editable CAD product: embeddings can warp; geometry and validators decide.
+
+A100 access changes the experiment appetite, but not the first-principles
+order. Use the deterministic substrate first, then spend GPU on many small
+probe families rather than one giant end-to-end bet:
+
+- low-dimensional autoencoders over primitive/supervector neighborhoods;
+- STE or binary-latent probes for discrete rule candidates;
+- SAE-style factor probes for validator residual directions;
+- ablations that ask whether a tiny latent explains hatch/outline, carrier
+  swap, merge, closure, or annotation-target decisions better than sparse
+  features.
+
+These are probes until they improve a measured product loop. If they reveal a
+stable factor, compile it into the engine; if they only look elegant, leave
+them in research.
+
 ## Company metrics
 
 Track many diagnostics, but steer by four metrics that compose into one chain:
